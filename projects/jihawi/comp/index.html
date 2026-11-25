@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="assets/fonts.css" />
 <style>
   :root{
-    --ground:#0E0D0C; --surface:#1E1C1A; --surface-2:#2A2724; --green:#1F3A33; --line:rgba(245,243,238,.14);
+    --ground:#0E0D0C; --surface:#173029; --surface-2:#22443A; --green:#1F3A33; --line:rgba(160,210,190,.18);
     --text:#F5F3EE; --text-2:#A9A6A0; --accent:#FFC400; --ink:#0B0B0C;
     --title:"Alexandria",sans-serif; --body:"IBM Plex Sans Arabic","Alexandria",sans-serif;
     --edge:0 0 2px rgba(5,5,5,.95),0 2px 6px rgba(0,0,0,.55);
@@ -311,7 +311,7 @@
   pop("#fCtx", 58.6); pop("#fRelT", 67.5); pop("#r1", 68.99); pop("#r2", 70.88); pop("#r3", 73.6);
   [["#r1",68.99],["#r2",70.88],["#r3",73.6]].forEach(([s, t], i, A) => {
     tl.to(s, { backgroundColor: "#FFC400", color: "#0B0B0C", borderColor: "#FFC400", duration: 0.2 }, t + 0.1);
-    if (A[i + 1]) tl.to(s, { backgroundColor: "#2A2724", color: "#F5F3EE", borderColor: "rgba(245,243,238,.14)", duration: 0.2 }, A[i + 1][1]);
+    if (A[i + 1]) tl.to(s, { backgroundColor: "#22443A", color: "#F5F3EE", borderColor: "rgba(160,210,190,.18)", duration: 0.2 }, A[i + 1][1]);
   });
 
   // 04 behind-text + checklist

@@ -2,7 +2,7 @@
 :root {
   /* colours: brand identity adapted to the studio */
   --ground: #0E0D0C;         /* warm studio black (wall #221D1B, darkened) */
-  --surface: #1E1C1A;        /* cards */
+  --surface: #173029;        /* cards: dark green (≈15% of frame) */
   --green: #1F3A33;          /* shelf green, secondary panels */
   --line: rgba(245, 243, 238, 0.14);
   --text: #F5F3EE;           /* paper white */

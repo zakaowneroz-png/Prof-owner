@@ -20,7 +20,7 @@ principles:
 
 colors:
   ground: "#0E0D0C"
-  surface: "#1E1C1A"
+  surface: "#173029"   # dark green cards, ~15% of frame
   green: "#1F3A33"
   line: "rgba(245,243,238,.14)"
   text: "#F5F3EE"
@@ -154,4 +154,5 @@ Alternate them; never the same one twice in a row.
 | 2026-11-25 | Punch-in zooms, balanced motion, marker wipe + card slide, full mix | round 4 |
 | 2026-11-25 | Key word = full yellow box (stroke-under was unreadable on dark footage) | brand-book check |
 | 2026-11-25 | From refs: chapter markers 01–05, index card, graphic-top/footage-bottom, circle PiP, yellow scribbles, kinetic word with swoosh | "استلهم من هذو" |
+| 2026-11-25 | Cards/panels in dark green #173029 (~15%) | "اضف 15% من لون الأخضر الغامق" |
 | 2026-11-25 | Cards, full graphic scenes, text behind subject; hook + CTA; 1080p | round 5 |
