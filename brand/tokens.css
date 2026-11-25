@@ -1,0 +1,32 @@
+/* Brand tokens: Prof Zakaria Faykhi. Filled from brand/frame.md. Load in every composition. */
+:root {
+  /* colours: brand identity adapted to the studio */
+  --ground: #0E0D0C;         /* warm studio black (wall #221D1B, darkened) */
+  --surface: #1E1C1A;        /* cards */
+  --green: #1F3A33;          /* shelf green, secondary panels */
+  --line: rgba(245, 243, 238, 0.14);
+  --text: #F5F3EE;           /* paper white */
+  --text-2: #A9A6A0;
+  --accent: #FFC400;         /* yellow highlighter: ONE key word at a time */
+  --accent-2: #FFD84D;
+  --paper: #F5F3EE;
+  --ink: #0B0B0C;
+
+  /* type */
+  --font-caption: "Alexandria", "IBM Plex Sans Arabic", sans-serif;
+  --font-title: "Alexandria", sans-serif;
+  --font-body: "IBM Plex Sans Arabic", sans-serif;
+  --cap-size: 76px;
+  --cap-accent-size: 92px;
+  --cap-weight: 800;
+  --cap-top: 1120px;         /* chest height, above the desk line (~1330) */
+  --cap-edge: 0 0 2px rgba(5, 5, 5, 0.95), 0 2px 6px rgba(0, 0, 0, 0.55);
+
+  /* highlighter stroke under the accent word */
+  --marker: var(--accent); /* key word sits in a yellow box, ink text */
+
+  /* shapes */
+  --radius-card: 36px;
+  --radius-chip: 999px;
+  --edge: 72px;
+}

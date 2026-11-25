@@ -1,0 +1,6 @@
+footage/
+renders/
+*.MOV
+*.mov
+node_modules/
+work/

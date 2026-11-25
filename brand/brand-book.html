@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>دليل المونتاج</title>
+<link href="https://fonts.googleapis.com/css2?family=Alexandria:wght@600;800;900&family=IBM+Plex+Sans+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tokens.css">
+<style>
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--ground);color:var(--text);font-family:var(--font-body)}
+  .page{width:1440px;padding:64px 72px;display:grid;grid-template-columns:400px 1fr;gap:64px}
+  h1{font-family:var(--font-title);font-weight:900;font-size:44px;margin:0 0 6px}
+  h2{font-family:var(--font-title);font-weight:800;font-size:26px;margin:0 0 16px}
+  .sub{color:var(--text-2);font-size:20px;margin:0 0 40px}
+  .phone{width:400px;height:711px;border-radius:28px;overflow:hidden;position:relative;background:url(still_graded.jpg) center/cover}
+  .hook{position:absolute;top:22px;right:26px;left:26px;display:flex;flex-direction:column;gap:12px}
+  .chip{display:inline-flex;gap:8px}
+  .chip span{font-family:var(--font-title);font-weight:800;font-size:13px;padding:5px 12px;border-radius:999px}
+  .chip .y{background:var(--accent);color:var(--ink)}
+  .chip .o{border:1.5px solid var(--text);font-family:var(--font-body);font-weight:600}
+  .hook .t{font-family:var(--font-title);font-weight:900;font-size:25px;line-height:1.45;text-shadow:var(--cap-edge)}
+  .mk{background:var(--accent);color:var(--ink);padding:0 8px;border-radius:8px;text-shadow:none;box-decoration-break:clone}
+  .cap{position:absolute;top:415px;left:0;right:0;text-align:center;font-family:var(--font-caption);font-weight:800;font-size:28px;text-shadow:var(--cap-edge)}
+  .cap .mk{font-weight:900;font-size:32px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:40px}
+  .sw{display:grid;grid-template-columns:repeat(6,1fr);gap:12px}
+  .sw div{display:flex;flex-direction:column;gap:6px;font-size:15px}
+  .sw i{display:block;height:92px;border-radius:14px;border:1.5px solid var(--line)}
+  .sw b{font-weight:600}
+  .sw small{color:var(--text-2);direction:ltr;text-align:right}
+  .card{background:var(--surface);border-radius:20px;padding:24px}
+  .type .big{font-family:var(--font-title);font-weight:900;font-size:48px}
+  .type .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+  .type .row:last-child{border:0}
+  .type small{color:var(--text-2);direction:ltr}
+  .tl{display:flex;gap:16px}
+  .tl .card{flex:1;display:flex;flex-direction:column;gap:12px}
+  .tl .demo{height:110px;border-radius:14px;background:var(--green);position:relative;overflow:hidden}
+  .wipe{position:absolute;inset:0;background:var(--accent);clip-path:polygon(35% 0,100% 0,100% 100%,20% 100%);}
+  .slide{position:absolute;top:18px;bottom:18px;left:40px;width:120px;border-radius:12px;background:url(still_graded.jpg) center/cover;transform:rotate(-6deg)}
+  .lay{display:flex;gap:14px}
+  .lay div{flex:1;text-align:center;font-size:15px;color:var(--text-2)}
+  .lay i{display:block;height:150px;border-radius:12px;background:var(--surface);border:1.5px solid var(--line);margin-bottom:8px;position:relative}
+  ul{margin:0;padding:0 20px 0 0;line-height:1.9;font-size:18px}
+  .no{color:var(--text-2)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div>
+    <div class="phone">
+      <div class="hook">
+        <div class="chip"><span class="y" dir="ltr">2ème BAC</span><span class="o">اللغة العربية</span></div>
+        <div class="t">العلاقة بين <span class="mk">العنوان</span> وموضوع النص</div>
+      </div>
+      <div class="cap">كيقلّب على <span class="mk">المؤشرات</span></div>
+    </div>
+  </div>
+  <div>
+    <h1>دليل المونتاج · <span dir="ltr">Prof Zakaria Faykhi</span></h1>
+    <p class="sub">هويتك البصرية، معدّلة على ألوان الاستوديو · ريلز 9:16 · تعليمي، ثقة وخبرة · نسخة أولية</p>
+
+    <h2>الألوان</h2>
+    <div class="sw" style="margin-bottom:40px">
+      <div><i style="background:#0E0D0C"></i><b>أسود الاستوديو</b><small>#0E0D0C</small></div>
+      <div><i style="background:#FFC400"></i><b>أصفر القلم</b><small>#FFC400</small></div>
+      <div><i style="background:#1F3A33"></i><b>أخضر الرفوف</b><small>#1F3A33</small></div>
+      <div><i style="background:#F5F3EE"></i><b>أبيض الورق</b><small>#F5F3EE</small></div>
+      <div><i style="background:#1E1C1A"></i><b>البطاقات</b><small>#1E1C1A</small></div>
+      <div><i style="background:#93341A"></i><b>خشب المكتب</b><small>في اللقطة فقط</small></div>
+    </div>
+
+    <div class="grid2" style="margin-bottom:40px">
+      <div>
+        <h2>الخطوط</h2>
+        <div class="card type">
+          <div class="row"><span class="big">القراءة التحليلية</span><small>Alexandria 900 · titles</small></div>
+          <div class="row"><span style="font-family:var(--font-caption);font-weight:800;font-size:30px">كيقلّب على المؤشرات</span><small>Alexandria 800 · captions</small></div>
+          <div class="row"><span style="font-size:20px">شرح واضح ومبسط، خطوة بخطوة.</span><small>IBM Plex Arabic · body</small></div>
+        </div>
+      </div>
+      <div>
+        <h2>الانتقالات</h2>
+        <div class="tl">
+          <div class="card"><div class="demo"><div class="wipe"></div></div><b>مسحة القلم الأصفر</b><span class="no" style="font-size:15px">توقيعك · 0.45 ث · whoosh</span></div>
+          <div class="card"><div class="demo"><div class="slide"></div></div><b>بطاقة تنزلق</b><span class="no" style="font-size:15px">للدخول لشاشة شرح</span></div>
+        </div>
+      </div>
+    </div>
+
+    <h2>التخطيطات</h2>
+    <div class="lay" style="margin-bottom:40px">
+      <div><i><em style="position:absolute;inset:30px 40px 40px;border-radius:50% 50% 8px 8px;background:#2a2725"></em><em style="position:absolute;left:20px;right:20px;bottom:30px;height:8px;background:var(--accent);border-radius:4px"></em></i>أنت كامل الشاشة<br>(الأساس)</div>
+      <div><i><em style="position:absolute;inset:14px 14px auto;height:22px;border-radius:8px;background:#3a3633"></em><em style="position:absolute;inset:44px 14px auto;height:22px;border-radius:8px;background:#3a3633"></em><em style="position:absolute;inset:80px 50px 14px;border-radius:50% 50% 8px 8px;background:#2a2725"></em></i>بطاقات خطوات<br>فوق الفيديو</div>
+      <div><i style="background:var(--ground)"><em style="position:absolute;inset:24px 24px auto;height:16px;border-radius:4px;background:var(--text)"></em><em style="position:absolute;inset:50px 60px auto 24px;height:10px;border-radius:4px;background:var(--accent)"></em><em style="position:absolute;inset:76px 24px auto;height:8px;border-radius:4px;background:#3a3633"></em><em style="position:absolute;inset:94px 24px auto;height:8px;border-radius:4px;background:#3a3633"></em></i>شاشة شرح كاملة<br>خلفية داكنة</div>
+      <div><i><em style="position:absolute;inset:20px 12px auto;font-style:normal;font-family:var(--font-title);font-weight:900;font-size:44px;color:#3a3633;text-align:center">النص</em><em style="position:absolute;inset:50px 50px 14px;border-radius:50% 50% 8px 8px;background:#2a2725"></em></i>نص كبير خلفك<br>1–2 مرات</div>
+    </div>
+
+    <div class="grid2">
+      <div><h2>دائماً</h2><ul>
+        <li>كلمة واحدة بالأصفر في كل ظهور</li>
+        <li>النص يظهر مع الكلمة المنطوقة</li>
+        <li>زوم خفيف مع كل فكرة جديدة</li>
+        <li>هوك + شارة المستوى، وختام «احفظ وتابع»</li>
+      </ul></div>
+      <div><h2>أبداً</h2><ul class="no">
+        <li>تغطية الوجه أو اليدين بالرسوم</li>
+        <li>ألوان زائدة أو إيموجي</li>
+        <li>تأثيرات Glitch أو تحريك حرف بحرف</li>
+        <li>نفس الانتقال مرتين متتاليتين</li>
+      </ul></div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
