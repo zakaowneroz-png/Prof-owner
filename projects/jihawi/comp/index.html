@@ -64,17 +64,17 @@
 </style>
 </head>
 <body>
-<div id="root" data-composition-id="main" data-start="0" data-duration="140.8" data-width="1080" data-height="1920">
+<div id="root" data-composition-id="main" data-start="0" data-duration="126.6" data-width="1080" data-height="1920">
 
   <!-- footage -->
   <div id="footWrap" class="full">
-    <video id="foot" class="clip" src="assets/source.mp4" data-start="0" data-duration="140.8" data-track-index="0" data-has-audio="true" playsinline></video>
+    <video id="foot" class="clip" src="assets/source.mp4" data-start="0" data-duration="126.6" data-track-index="0" data-has-audio="true" playsinline></video>
   </div>
 
   <!-- text behind the teacher (ch4) -->
   <div id="behind" class="abs"><div>شبكة</div><div class="y">التصحيح</div></div>
   <div id="subjWrap" class="full">
-    <video id="subj" class="clip" src="assets/subj.webm" data-start="76.9" data-duration="5.2" data-track-index="1" muted playsinline></video>
+    <video id="subj" class="clip" src="assets/subj.webm" data-start="68.967" data-duration="5.200" data-track-index="1" muted playsinline></video>
   </div>
 
   <div id="pipRing" class="abs"></div>
@@ -230,7 +230,7 @@
   <div id="m6" class="mark"><span class="n">06</span><span class="l">حتى سؤال ما يبقى خاوي</span></div>
   <div id="zf" class="abs">ZF</div>
 
-  <audio id="sfx" class="clip" src="assets/sfx.wav" data-start="0" data-duration="140.8" data-track-index="2"></audio>
+  <audio id="sfx" class="clip" src="assets/sfx.wav" data-start="0" data-duration="126.6" data-track-index="2"></audio>
 
   <div id="caps" class="full" style="pointer-events:none"></div>
   <div id="wipe" class="abs"></div>
@@ -238,8 +238,11 @@
 
 <script>
 (function(){
-  const DUR = 140.8, F = 1/30;
+  const DUR = 140.8, F = 1/30;   // authored on the 140.8 s cut; REMAP maps it onto the tightened footage
+  const REMAP = [[0.0, 26.2667, 0], [26.5333, 27.3667, 26.3], [27.5667, 27.7667, 27.1333], [30.3, 34.3333, 27.3333], [36.8667, 45.6333, 31.3667], [46.0333, 52.6667, 40.1667], [53.4, 62.2, 46.8], [63.5333, 89.3333, 55.6], [90.9667, 91.5, 81.4], [92.1, 96.0, 81.9333], [96.2333, 105.9333, 85.8333], [107.1333, 112.4, 95.5333], [113.4333, 119.2333, 100.8333], [119.9, 120.1, 106.6333], [120.4333, 126.5, 106.8333], [127.1667, 140.8333, 112.9333]];
+  const R = (t) => { for (const [a, b, n] of REMAP) { if (t < a) return n; if (t <= b) return n + (t - a); } const L = REMAP[REMAP.length - 1]; return L[2] + (L[1] - L[0]); };
   const tl = gsap.timeline({ paused: true });
+  for (const k of ["to", "from", "fromTo", "set"]) { const f = tl[k].bind(tl); tl[k] = (...a) => { const i = a.length - 1; if (typeof a[i] === "number") a[i] = R(a[i]); return f(...a); }; }
   window.__timelines = window.__timelines || {};
   window.__timelines["main"] = tl;
   const $ = (s) => document.querySelector(s);
