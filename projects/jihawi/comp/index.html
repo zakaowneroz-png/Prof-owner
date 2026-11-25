@@ -242,7 +242,8 @@
   const REMAP = [[0.0, 26.2667, 0], [26.5333, 27.3667, 26.3], [27.5667, 27.7667, 27.1333], [30.3, 34.3333, 27.3333], [36.8667, 45.6333, 31.3667], [46.0333, 52.6667, 40.1667], [53.4, 62.2, 46.8], [63.5333, 89.3333, 55.6], [90.9667, 91.5, 81.4], [92.1, 96.0, 81.9333], [96.2333, 105.9333, 85.8333], [107.1333, 112.4, 95.5333], [113.4333, 119.2333, 100.8333], [119.9, 120.1, 106.6333], [120.4333, 126.5, 106.8333], [127.1667, 140.8333, 112.9333]];
   const R = (t) => { for (const [a, b, n] of REMAP) { if (t < a) return n; if (t <= b) return n + (t - a); } const L = REMAP[REMAP.length - 1]; return L[2] + (L[1] - L[0]); };
   const tl = gsap.timeline({ paused: true });
-  for (const k of ["to", "from", "fromTo", "set"]) { const f = tl[k].bind(tl); tl[k] = (...a) => { const i = a.length - 1; if (typeof a[i] === "number") a[i] = R(a[i]); return f(...a); }; }
+  const RAW = {};
+  for (const k of ["to", "from", "fromTo", "set"]) { const f = tl[k].bind(tl); RAW[k] = f; tl[k] = (...a) => { const i = a.length - 1; if (typeof a[i] === "number") a[i] = R(a[i]); return f(...a); }; }
   window.__timelines = window.__timelines || {};
   window.__timelines["main"] = tl;
   const $ = (s) => document.querySelector(s);
@@ -373,20 +374,21 @@
       host.appendChild(g);
       const ci = g.firstChild, wpx = ci.getBoundingClientRect().width;
       if (wpx > 980) ci.style.transform = `scale(${(980 / wpx).toFixed(3)})`;
-      const start = c.t[0] - 0.1;
-      const next = CAPS[gi + 1] ? CAPS[gi + 1].t[0] - 2 * F - 0.05 : DUR;
-      const out = Math.max(c.t[c.t.length - 1] + 0.3, Math.min(c.end + 0.35, next - 0.16));
-      tl.set(g, { opacity: 1 }, start);
+      // caption timing is computed on the tightened cut (R), then placed with the raw (un-remapped) methods
+      const T = c.t.map(R), start = T[0] - 0.1;
+      const next = CAPS[gi + 1] ? R(CAPS[gi + 1].t[0]) - 2 * F - 0.05 : R(DUR);
+      const out = Math.max(Math.min(T[T.length - 1] + 0.3, next - 0.16), Math.min(R(c.end) + 0.35, next - 0.16));
+      RAW.set(g, { opacity: 1 }, start);
       g.querySelectorAll(".w").forEach((w) => {
-        const t = +w.dataset.t - 2 * F;
-        tl.fromTo(w, { opacity: 0, y: 18, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "back.out(1.4)" }, t);
+        const t = R(+w.dataset.t) - 2 * F;
+        RAW.fromTo(w, { opacity: 0, y: 18, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "back.out(1.4)" }, t);
       });
       g.querySelectorAll(".hl").forEach((h) => {
-        const t = +h.dataset.t - 2 * F;
-        tl.fromTo(h.querySelector(".bg"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power3.out" }, t);
-        tl.fromTo(h.querySelectorAll(".w"), { color: "#F5F3EE" }, { color: "#0B0B0C", duration: 0.12 }, t + 0.06);
+        const t = R(+h.dataset.t) - 2 * F;
+        RAW.fromTo(h.querySelector(".bg"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power3.out" }, t);
+        RAW.fromTo(h.querySelectorAll(".w"), { color: "#F5F3EE" }, { color: "#0B0B0C", duration: 0.12 }, t + 0.06);
       });
-      if (gi < CAPS.length - 1) tl.to(g, { opacity: 0, y: -14, duration: Math.min(0.15, next - out), ease: "power2.in" }, Math.min(out, next - 0.16));
+      if (gi < CAPS.length - 1) RAW.to(g, { opacity: 0, y: -14, duration: 0.14, ease: "power2.in" }, Math.max(start + 0.2, Math.min(out, next - 0.15)));
     });
   };
 
