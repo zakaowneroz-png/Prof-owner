@@ -4,3 +4,11 @@ renders/
 *.mov
 node_modules/
 work/
+projects/*/comp/assets/source.mp4
+projects/*/comp/assets/*.webm
+projects/*/comp/assets/*.wav
+projects/*/previews/
+projects/*/renders/
+projects/*/work/roto/
+projects/*/work/check.json
+.hyperframes/
