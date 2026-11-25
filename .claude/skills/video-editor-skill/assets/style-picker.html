@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Style picker · Video Editor Skill</title>
+<style>
+  :root { --bg: #0d1016; --card: #161b24; --line: rgba(255,255,255,.08); --text: #eef1f6; --muted: #98a2b3; --acc: #6f8fff; --paper: #f1f2f4; --ink: #1b2430; }
+  @media (prefers-color-scheme: light) { :root { --bg: #f4f5f7; --card: #ffffff; --line: rgba(0,0,0,.08); --text: #141821; --muted: #5d6675; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--text); font: 15px/1.45 -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, sans-serif; padding: 28px 20px 60px; }
+  header { max-width: 1180px; margin: 0 auto 26px; }
+  h1 { font-size: 28px; margin: 0 0 6px; letter-spacing: -.01em; }
+  header p { margin: 0; color: var(--muted); max-width: 760px; }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 99px; background: var(--acc); color: #fff; font-weight: 700; font-size: 12px; margin-right: 6px; }
+  section { max-width: 1180px; margin: 34px auto 0; }
+  h2 { font-size: 19px; margin: 0 0 4px; } h2 + p { margin: 0 0 16px; color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+  .card h3 { margin: 10px 2px 2px; font-size: 14px; } .card h3 b { color: var(--acc); margin-right: 6px; }
+  .card p { margin: 0 2px; font-size: 12.5px; color: var(--muted); }
+  .stage { container-type: size; position: relative; width: 100%; aspect-ratio: 9 / 16; border-radius: 10px; overflow: hidden; background: #000; isolation: isolate; }
+  .sc { position: absolute; inset: 0; }
+  .foot { background: radial-gradient(120% 70% at 60% 30%, #3b5683 0%, #1c2638 55%, #0f141d 100%); }
+  .foot { overflow: hidden; }
+  .foot svg { position: absolute; left: 50%; bottom: 0; width: 90%; translate: -50% 0; }
+  .foot.mini svg { width: 46%; }
+  .gfx { background: var(--paper); display: grid; place-items: center; align-content: center; gap: 8%; }
+  .gfx .t { width: 62%; height: 7%; border-radius: 6px; background: var(--ink); }
+  .gfx .row { display: flex; gap: 6%; width: 70%; justify-content: center; }
+  .gfx .tile { width: 28%; aspect-ratio: 1; border-radius: 22%; background: var(--acc); opacity: .9; }
+  .ov { position: absolute; inset: 0; pointer-events: none; }
+  .cap { position: absolute; left: 0; right: 0; text-align: center; font-weight: 800; color: #fff; white-space: nowrap; }
+  .w { display: inline-block; margin: 0 .18em; }
+  .acc { color: #a9c1ff; }
+  footer { max-width: 1180px; margin: 40px auto 0; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Pick your style</h1>
+  <p>Every example loops. Reply with the numbers you like, and any you never want, e.g. <span class="pill">T2 T3 T6</span><span class="pill">C1</span><span class="pill">M2</span><span class="pill">L1 L2 L4</span>. You can also point at one of your own reference videos instead ("like ref 2 at 0:14").</p>
+</header>
+
+<section><h2>Transitions</h2><p>How one shot or scene turns into the next. The dark frame stands for your footage, the light one for a graphic scene.</p><div class="grid" id="T"></div></section>
+<section><h2>Caption styles</h2><p>How your words appear on screen.</p><div class="grid" id="C"></div></section>
+<section><h2>Motion feel</h2><p>The same entrance at three energies: watch how the tiles land.</p><div class="grid" id="M"></div></section>
+<section><h2>Layouts</h2><p>Where you and the graphics share the frame.</p><div class="grid" id="L"></div></section>
+<footer>Video Editor Skill by OTHMANZR: style picker. These are generic examples. Your guideline uses your own colours and fonts.</footer>
+
+<script>
+const PERSON = '<svg viewBox="0 0 100 170"><path d="M8 170c0-62 15-106 42-106s42 44 42 106z" fill="#8a93a3"/><circle cx="50" cy="38" r="17" fill="#e2c3a6"/><path d="M33 26c4-12 30-12 34 0-6-5-28-5-34 0z" fill="#2b2420"/></svg>';
+const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), lerp = (a, b, t) => a + (b - a) * t;
+const eIn = (x) => x * x * x, eOut = (x) => 1 - Math.pow(1 - x, 3), eIO = (x) => (x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2);
+const spring = (t, f = 2, z = .6) => { if (t <= 0) return 0; const w = 2 * Math.PI * f, wd = w * Math.sqrt(1 - z * z); return 1 - Math.exp(-z * w * t) * (Math.cos(wd * t) + (z * w / wd) * Math.sin(wd * t)); };
+const diamond = (x, y, r) => `polygon(${x}% ${y - r}%, ${x + r * 1.78}% ${y}%, ${x}% ${y + r}%, ${x - r * 1.78}% ${y}%)`;
+const S = []; // {el, draw(el, t)}
+
+function card(host, id, name, desc, build, draw) {
+  const c = document.createElement("div"); c.className = "card";
+  c.innerHTML = `<div class="stage"></div><h3><b>${id}</b>${name}</h3><p>${desc}</p>`;
+  document.getElementById(host).appendChild(c);
+  const st = c.querySelector(".stage"); const parts = build(st); S.push({ parts, draw });
+}
+// two scenes stacked: graphic (b) under footage (a)
+function two(st) {
+  st.innerHTML = `<div class="sc gfx"><div class="t"></div><div class="row"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div></div><div class="sc foot">${PERSON}</div><div class="ov"></div>`;
+  const [b, a, ov] = st.children; return { a, b, ov, st };
+}
+// transition loop: hold A → A→B → hold B → B→A; p = progress of the current change, dir = 1 going to B
+function phase(t, d = .55) { const T = 3.4, u = t % T; if (u < 1) return { p: 0, dir: 1 }; if (u < 1 + d) return { p: (u - 1) / d, dir: 1 }; if (u < 2.7) return { p: 1, dir: 1 }; if (u < 2.7 + d) return { p: 1 - (u - 2.7) / d, dir: -1 }; return { p: 0, dir: -1 }; }
+const reset = (el) => { el.style.cssText = ""; };
+
+const TRANS = [
+  ["T1", "Hard cut", "Straight cut on the beat. The cleanest, fastest option.", (P, t) => { const { p } = phase(t); P.a.style.opacity = p < .5 ? 1 : 0; }],
+  ["T2", "Zoom-blur match cut", "Camera pushes into the shot with blur and lands zoomed into the next scene, which settles.", (P, t) => {
+    const { p } = phase(t, .6); const k = p < .5 ? eIn(p * 2) : 1 - eOut((p - .5) * 2);
+    P.a.style.opacity = p < .5 ? 1 : 0; P.a.style.filter = P.b.style.filter = `blur(${10 * k}px)`;
+    P.a.style.transform = `scale(${1 + .9 * (p < .5 ? k : 0)})`; P.b.style.transform = `scale(${p >= .5 ? 1 + .35 * k : 1})`; }],
+  ["T3", "Shape iris", "A diamond (or circle) grows from a point and reveals the next scene, with an accent edge.", (P, t) => {
+    const { p } = phase(t, .6); const r = 120 * eIn(1 - p); P.a.style.clipPath = diamond(50, 50, r);
+    P.ov.style.cssText = p > 0 && p < 1 ? `clip-path:${diamond(50, 50, r + 1.2)};background:var(--acc);mask:linear-gradient(#000,#000);-webkit-mask:none;opacity:${clamp((80 - r) / 40)}` : ""; P.ov.style.zIndex = 0; P.a.style.zIndex = 1; }],
+  ["T4", "Click iris", "A circle opens from a cursor click point.", (P, t) => {
+    const { p } = phase(t, .55); P.a.style.clipPath = `circle(${130 * eIn(1 - p)}% at 70% 62%)`; }],
+  ["T5", "Sheet rise", "A paper sheet slides up over the footage while the footage sinks back and darkens.", (P, t) => {
+    const { p } = phase(t, .55); const q = eIO(p);
+    P.a.style.clipPath = `inset(0 0 ${q * 100}% 0)`; P.a.style.transform = `scale(${1 - .1 * q}) translateY(${-4 * q}%)`; P.a.style.filter = `brightness(${1 - .5 * q}) blur(${2 * q}px)`; }],
+  ["T6", "Card morph", "The footage shrinks into a rounded card that moves aside for the graphic.", (P, t) => {
+    const { p } = phase(t, .7); const q = eIO(p);
+    P.a.style.transform = `translate(${q * 18}%, ${q * 26}%) scale(${1 - .62 * q})`; P.a.style.borderRadius = `${q * 22}px`; P.a.style.boxShadow = `0 10px 30px rgba(0,0,0,${.4 * q})`; }],
+  ["T7", "Whip / slide push", "Both scenes slide together with motion blur, like a fast pan.", (P, t) => {
+    const { p } = phase(t, .45); const q = eIO(p), bl = 8 * Math.sin(Math.PI * p);
+    P.a.style.transform = `translateX(${-100 * q}%)`; P.b.style.transform = `translateX(${100 - 100 * q}%)`; P.a.style.filter = P.b.style.filter = `blur(${bl}px)`; }],
+  ["T8", "3D flip", "The frame flips like a card to reveal the next scene.", (P, t) => {
+    const { p } = phase(t, .7); P.st.style.perspective = "500px"; const q = eIO(p);
+    P.a.style.transform = `rotateY(${q * 180}deg)`; P.a.style.backfaceVisibility = "hidden"; P.b.style.transform = `rotateY(${q * 180 - 180}deg)`; P.b.style.backfaceVisibility = "hidden"; }],
+  ["T9", "Band morph", "The footage collapses into a 16:9 band while a colour floods in behind.", (P, t) => {
+    const { p } = phase(t, .6); const q = eIO(p);
+    P.b.style.background = `color-mix(in srgb, #3f5f8a ${q * 100}%, var(--paper))`;
+    P.a.style.clipPath = `inset(${lerp(0, 58, q)}% ${lerp(0, 4, q)}% ${lerp(0, 12, q)}% ${lerp(0, 4, q)}% round ${q * 10}px)`; }],
+  ["T10", "Glitch", "A short digital glitch with RGB offset and sliced jitter.", (P, t) => {
+    const { p } = phase(t, .35); const on = p > 0 && p < 1, j = on ? Math.sin(t * 90) * 6 : 0;
+    P.a.style.opacity = p < .5 ? 1 : 0; const g = on ? `drop-shadow(${j}px 0 0 rgba(255,0,80,.8)) drop-shadow(${-j}px 0 0 rgba(0,220,255,.8))` : "";
+    P.a.style.filter = P.b.style.filter = g; P.a.style.transform = P.b.style.transform = on ? `translateX(${j / 2}px)` : ""; }],
+  ["T11", "Light leak / flash", "A warm flash of light covers the cut.", (P, t) => {
+    const { p } = phase(t, .6); const k = Math.sin(Math.PI * p); P.a.style.opacity = p < .5 ? 1 : 0;
+    P.ov.style.cssText = `background:radial-gradient(90% 60% at 30% 40%, rgba(255,214,150,${k}), rgba(255,120,60,${.6 * k}) 45%, transparent 75%);mix-blend-mode:screen`; }],
+  ["T12", "Blur dissolve", "A soft cross-fade through blur. Calm and premium.", (P, t) => {
+    const { p } = phase(t, .7); P.a.style.opacity = 1 - eIO(p); P.a.style.filter = `blur(${8 * p}px)`; P.b.style.filter = `blur(${8 * (1 - p)}px)`; }],
+];
+TRANS.forEach(([id, n, d, f]) => card("T", id, n, d, two, (P, t) => { [P.a, P.b, P.ov].forEach(reset); P.st.style.filter = ""; P.st.style.transform = ""; f(P, t); }));
+
+// ---------- captions ----------
+const LINE1 = ["this", "changes", "how"], LINE2 = ["you", "edit"];
+function capStage(st) { st.innerHTML = `<div class="sc foot">${PERSON}</div><div class="cap" style="top:58%"></div>`; return { st, cap: st.children[1] }; }
+const words = (arr, cls = "") => arr.map((w) => `<span class="w ${cls}">${w}</span>`).join("");
+const CAPS = [
+  ["C1", "Two-line headline", "Centred at chest height, 1–2 accent words bigger and coloured.", (P) => {
+    P.cap.style.cssText = "top:56%;font-size:15px;text-shadow:0 0 1px #000,0 1px 2px #000";
+    P.cap.innerHTML = `<div>${words(LINE1)}</div><div style="font-size:24px">${words(["you"])}<span class="w acc">edit</span></div>`;
+    return [...P.cap.querySelectorAll(".w")]; }, "rise"],
+  ["C2", "Word by word", "One big word at a time, popping on its beat.", (P) => {
+    P.cap.style.cssText = "top:58%;font-size:28px;text-shadow:0 2px 6px rgba(0,0,0,.6)"; P.cap.innerHTML = [...LINE1, ...LINE2].map((w) => `<span class="w" style="position:absolute;left:0;right:0">${w}</span>`).join("");
+    return [...P.cap.querySelectorAll(".w")]; }, "single"],
+  ["C3", "Karaoke highlight", "The whole line shows; the spoken word gets a highlight pill.", (P) => {
+    P.cap.style.cssText = "top:72%;font-size:14px"; P.cap.innerHTML = words([...LINE1, ...LINE2]);
+    return [...P.cap.querySelectorAll(".w")]; }, "karaoke"],
+  ["C4", "Classic subtitle", "Small sentence in the lower third. Readable, low-key.", (P) => {
+    P.cap.style.cssText = "top:80%;font-size:11px;font-weight:600;text-shadow:0 1px 2px #000"; P.cap.innerHTML = `<span class="w">This changes how you edit</span>`;
+    return [...P.cap.querySelectorAll(".w")]; }, "fade"],
+  ["C5", "Boxed", "Words sit on solid boxes: high contrast on any footage.", (P) => {
+    P.cap.style.cssText = "top:60%;font-size:15px"; P.cap.innerHTML = `<div>${words(LINE1, "box")}</div><div>${words(LINE2, "box")}</div>`;
+    P.cap.querySelectorAll(".box").forEach((b) => (b.style.cssText = "background:#fff;color:#111;padding:1px 5px;border-radius:4px;margin:2px"));
+    return [...P.cap.querySelectorAll(".w")]; }, "rise"],
+  ["C6", "Bold outline", "Uppercase, heavy stroke, punchy (classic short-form look).", (P) => {
+    P.cap.style.cssText = "top:58%;font-size:20px;text-transform:uppercase;-webkit-text-stroke:2.5px #000;paint-order:stroke fill;font-weight:900";
+    P.cap.innerHTML = `<div>${words(LINE1.slice(0, 2))}</div><div style="color:#ffe14d">${words(["how", "you", "edit"])}</div>`;
+    return [...P.cap.querySelectorAll(".w")]; }, "pop"],
+  ["C7", "Split around a graphic", "Line 1 top-right, line 2 bottom-left, graphic in between.", (P) => {
+    P.st.querySelector(".foot").style.cssText = "background:var(--paper)"; P.st.querySelector(".foot svg").style.display = "none";
+    P.cap.style.cssText = "top:0;bottom:0;font-size:15px;color:var(--ink)";
+    P.cap.innerHTML = `<div style="position:absolute;right:10%;top:18%">${words(LINE1)}</div><div style="position:absolute;left:10%;bottom:20%;font-size:24px;color:var(--acc)">${words(LINE2)}</div><div style="position:absolute;left:30%;right:30%;top:40%;aspect-ratio:1;border-radius:22%;background:var(--acc);opacity:.85"></div>`;
+    return [...P.cap.querySelectorAll(".w")]; }, "slide"],
+  ["C8", "No captions", "Clean footage. Text only for key words or titles.", (P) => { P.cap.innerHTML = ""; return []; }, "none"],
+];
+CAPS.forEach(([id, n, d, b, mode]) => card("C", id, n, d, (st) => { const P = capStage(st); P.ws = b(P); P.mode = mode; return P; }, (P, t) => {
+  const u = t % 3.2, ws = P.ws, n = ws.length;
+  ws.forEach((w, i) => {
+    const at = .25 + i * .32, d = u - at;
+    if (P.mode === "single") { const on = d >= 0 && (d < .32 || (i === n - 1 && u < 2.9)); w.style.opacity = on ? 1 : 0; w.style.transform = `scale(${on ? lerp(.6, 1, spring(d, 3, .45)) : 1})`; return; }
+    if (P.mode === "karaoke") { const on = d >= 0 && d < .32; w.style.background = on ? "var(--acc)" : "transparent"; w.style.borderRadius = "5px"; w.style.padding = "0 3px"; w.style.opacity = u < 2.9 ? 1 : 0; return; }
+    if (P.mode === "fade") { w.style.opacity = clamp((u - .2) * 4) * (u < 2.9 ? 1 : 0); return; }
+    const s = spring(d, 2, .55), vis = d >= 0 && u < 2.9;
+    w.style.opacity = vis ? clamp(d * 8) : 0;
+    if (P.mode === "pop") w.style.transform = `scale(${lerp(.3, 1, spring(d, 2.6, .4))})`;
+    else if (P.mode === "slide") w.style.transform = `translateX(${lerp(14, 0, eOut(clamp(d / .4)))}px)`;
+    else w.style.transform = `translateY(${lerp(10, 0, s)}px)`;
+    w.style.filter = `blur(${lerp(3, 0, clamp(s * 1.4))}px)`;
+  });
+}));
+
+// ---------- motion feels ----------
+function tiles(st) { st.innerHTML = `<div class="sc gfx"><div class="row" style="width:80%"><div class="tile"></div><div class="tile"></div><div class="tile"></div></div></div>`; return { st, ts: [...st.querySelectorAll(".tile")] }; }
+const FEELS = [["M1", "Calm", "Slow, no overshoot, soft blur-in. Premium and quiet.", 1.2, .95, 0], ["M2", "Balanced", "Fast arrival, tiny settle. Works for most content.", 2.0, .72, .015], ["M3", "Punchy", "Snappy with overshoot and a camera punch-in.", 3.0, .38, .06]];
+FEELS.forEach(([id, n, d, f, z, punch]) => card("M", id, n, d, tiles, (P, t) => {
+  const u = t % 2.6;
+  P.ts.forEach((el, i) => { const dd = u - .2 - i * .12, s = spring(dd, f, z); el.style.opacity = dd > 0 && u < 2.3 ? 1 : 0; el.style.transform = `translateY(${lerp(60, 0, s)}px) scale(${lerp(.6, 1, s)})`; el.style.filter = `blur(${lerp(6, 0, clamp(s * 1.5))}px)`; });
+  const k = u > .2 ? Math.sin(2 * Math.PI * 1.1 * (u - .2)) * Math.exp(-3.4 * (u - .2)) : 0; P.st.firstChild.style.transform = `scale(${1 + punch * Math.max(0, k)})`;
+}));
+
+// ---------- layouts ----------
+const LAYS = [
+  ["L1", "Full footage", "You full-frame, captions at chest height. The default.", `<div class="sc foot">${PERSON}</div><div class="cap" style="top:60%;font-size:13px">${words(["two", "lines"])}<br>${words(["of", "captions"])}</div>`],
+  ["L2", "Full-screen graphic", "A graphic scene takes the whole frame; your voice continues.", `<div class="sc gfx"><div class="t"></div><div class="row"><div class="tile"></div><div class="tile"></div></div></div>`],
+  ["L3", "Split", "Graphic on top, your footage in a card below.", `<div class="sc gfx" style="align-content:start;padding-top:18%"><div class="t"></div></div><div class="sc foot mini" style="top:55%;left:5%;right:5%;border-radius:12px 12px 0 0">${PERSON}</div>`],
+  ["L4", "Band on colour", "Your footage as a 16:9 band, graphic above, on a colour field.", `<div class="sc" style="background:#3f5f8a"></div><div class="sc gfx" style="background:transparent;align-content:start;padding-top:22%"><div class="row"><div class="tile" style="background:#fff"></div><div class="tile" style="background:#fff"></div></div></div><div class="sc foot mini" style="top:60%;bottom:12%;left:4%;right:4%;border-radius:8px">${PERSON}</div>`],
+  ["L5", "Behind you", "A big number or word sits behind you (needs a cut-out).", `<div class="sc foot"></div><div class="sc" style="display:grid;place-items:center;font:900 46cqh/1 sans-serif;color:#efe4cc;padding:0 34% 46% 0">4</div><div class="sc">${PERSON.replace("<svg", '<svg style="position:absolute;left:50%;bottom:0;width:90%;translate:-50% 0"')}</div>`],
+  ["L6", "Picture-in-picture", "Screen or graphic full-frame, you in a small bubble.", `<div class="sc gfx"><div class="t"></div><div class="t" style="width:48%;opacity:.4"></div></div><div class="sc foot mini" style="left:8%;top:72%;width:30%;height:17%;border-radius:50%">${PERSON}</div>`],
+];
+LAYS.forEach(([id, n, d, html]) => card("L", id, n, d, (st) => { st.innerHTML = html; return { st }; }, (P, t) => { P.st.style.transform = `scale(${1 + .012 * Math.sin(t * .8)})`; }));
+
+let t0 = performance.now();
+(function loop(now) { const t = (now - t0) / 1000; S.forEach((s) => s.draw(s.parts, t)); requestAnimationFrame(loop); })(t0);
+</script>
+</body>
+</html>
