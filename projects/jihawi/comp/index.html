@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-resolution="portrait">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=1080, height=1920" />
+<title>نصائح الجهوي</title>
+<script src="assets/vendor/gsap.min.js"></script>
+<script src="assets/captions.js"></script>
+<link rel="stylesheet" href="assets/fonts.css" />
+<style>
+  :root{
+    --ground:#0E0D0C; --surface:#1E1C1A; --surface-2:#2A2724; --green:#1F3A33; --line:rgba(245,243,238,.14);
+    --text:#F5F3EE; --text-2:#A9A6A0; --accent:#FFC400; --ink:#0B0B0C;
+    --title:"Alexandria",sans-serif; --body:"IBM Plex Sans Arabic","Alexandria",sans-serif;
+    --edge:0 0 2px rgba(5,5,5,.95),0 2px 6px rgba(0,0,0,.55);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:var(--ground)}
+  #root{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--ground);font-family:var(--title);color:var(--text)}
+  .abs{position:absolute}
+  .full{position:absolute;left:0;top:0;width:1080px;height:1920px}
+  #footWrap{transform-origin:0 0;clip-path:circle(2400px at 520px 560px)}
+  #foot,#subj{position:absolute;left:0;top:0;width:1080px;height:1920px;object-fit:cover}
+  #pipRing{left:0;top:0;width:236px;height:236px;border-radius:50%;border:6px solid var(--accent);opacity:0}
+
+  /* cards / scenes */
+  .scene{opacity:0}
+  .card{position:absolute;left:96px;right:96px;top:300px;background:var(--surface);border-radius:36px;padding:48px 52px;
+        border:1.5px solid var(--line);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+  .kick{display:flex;align-items:center;gap:16px;font:600 30px var(--title);color:var(--text-2);margin-bottom:18px}
+  .kick b{font:900 34px var(--title);color:var(--ink);background:var(--accent);border-radius:12px;padding:2px 14px}
+  .h{font:900 64px/1.25 var(--title)}
+  .chip{display:inline-flex;align-items:center;gap:12px;font:800 40px/1 var(--title);padding:22px 30px;border-radius:22px;background:var(--surface-2);border:2px solid var(--line)}
+  .chip.y{background:var(--accent);color:var(--ink);border-color:var(--accent)}
+  .chip.o{background:transparent;border:2.5px solid var(--text)}
+  .row{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+  .arrow{font:900 54px var(--title);color:var(--accent)}
+  .mk{background:var(--accent);color:var(--ink);border-radius:12px;padding:0 14px}
+  .note{font:600 34px/1.5 var(--body);color:var(--text-2)}
+  .list .it{display:flex;align-items:center;gap:22px;padding:12px 0;border-bottom:1.5px solid var(--line);font:800 42px var(--title)}
+  .list .it:last-child{border:0}
+  .num{font:900 30px var(--title);color:var(--ink);background:var(--accent);border-radius:12px;min-width:62px;text-align:center;padding:6px 0}
+  .chk{width:52px;height:52px;border-radius:14px;background:var(--accent);display:grid;place-items:center;flex:none}
+
+  /* chapter marker */
+  .mark{position:absolute;right:96px;top:250px;display:flex;align-items:baseline;gap:16px;opacity:0;text-shadow:var(--edge)}
+  .mark .n{font:900 72px/1 var(--title);color:var(--accent)}
+  .mark .l{font:800 34px var(--title)}
+  #zf{left:96px;top:256px;width:64px;height:64px;border-radius:16px;background:var(--accent);display:grid;place-items:center;font:900 28px var(--title);color:var(--ink);direction:ltr;letter-spacing:-1px;opacity:.95}
+
+  /* captions */
+  .capg{position:absolute;left:40px;right:40px;text-align:center;white-space:nowrap;opacity:0;text-shadow:var(--edge)}
+  .capg .w{display:inline-block;font:800 76px/1.3 var(--title);margin:0 9px;opacity:0}
+  .capg .hl{display:inline-block;position:relative;padding:0 12px;margin:0 4px}
+  .capg .hl .bg{position:absolute;left:0;right:0;top:12%;bottom:6%;background:var(--accent);border-radius:14px;transform-origin:100% 50%;transform:scaleX(0)}
+  .capg .hl .w{position:relative;font-weight:900;font-size:86px;margin:0 4px;text-shadow:none}
+
+  /* wipe */
+  #wipe{left:-260px;top:-240px;width:1600px;height:2400px;background:var(--accent);opacity:1}
+  #behind{left:0;right:0;top:300px;text-align:center;opacity:0}
+  #behind div{font:900 230px/1.05 var(--title);color:var(--text)}
+  #behind div.y{color:var(--accent)}
+  .bar{height:34px;border-radius:12px;background:var(--accent);transform-origin:100% 50%}
+</style>
+</head>
+<body>
+<div id="root" data-composition-id="main" data-start="0" data-duration="140.8" data-width="1080" data-height="1920">
+
+  <!-- footage -->
+  <div id="footWrap" class="full">
+    <video id="foot" class="clip" src="assets/source.mp4" data-start="0" data-duration="140.8" data-track-index="0" data-has-audio="true" playsinline></video>
+  </div>
+
+  <!-- text behind the teacher (ch4) -->
+  <div id="behind" class="abs"><div>شبكة</div><div class="y">التصحيح</div></div>
+  <div id="subjWrap" class="full">
+    <video id="subj" class="clip" src="assets/subj.webm" data-start="76.9" data-duration="5.2" data-track-index="1" muted playsinline></video>
+  </div>
+
+  <div id="pipRing" class="abs"></div>
+
+  <!-- 00 intro -->
+  <div id="sIntro" class="scene full" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:30px;padding-bottom:300px">
+    <div id="i6" style="font:900 360px/1 var(--title);color:var(--ink);background:var(--accent);border-radius:56px;padding:20px 90px">6</div>
+    <div id="i2" style="font:900 84px/1.2 var(--title);text-align:center">حويجات صغار<br><span style="color:var(--text-2);font-size:60px">لنقط كبار في الجهوي</span></div>
+  </div>
+
+  <!-- 00 index card -->
+  <div id="sIdx" class="scene full">
+    <div class="card" style="padding:36px 44px">
+      <div class="row" style="margin-bottom:18px"><span class="chip y" dir="ltr" style="font-size:32px;padding:14px 24px">1ère BAC</span><span class="chip o" style="font-size:30px;padding:12px 22px">اللغة العربية</span></div>
+      <div class="h" style="font-size:52px;margin-bottom:10px"><span id="idxSix" class="mk">6</span> حويجات صغار لنقط كبار في <span id="idxJ" class="mk" style="background:transparent;color:var(--text)">الجهوي</span></div>
+      <div class="list">
+        <div class="it"><span class="num">01</span>الفرضية</div>
+        <div class="it"><span class="num">02</span>بين مزدوجتين</div>
+        <div class="it"><span class="num">03</span>الحقول الدلالية</div>
+        <div class="it"><span class="num">04</span>التعبير والإنشاء</div>
+        <div class="it"><span class="num">05</span>تدبير الوقت</div>
+        <div class="it"><span class="num">06</span>حتى سؤال ما يبقى خاوي</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 01 hypothesis card -->
+  <div id="s1" class="scene full">
+    <div class="card">
+      <div class="kick"><b>01</b>الفرضية</div>
+      <div class="note" style="margin-bottom:18px">انطلق من:</div>
+      <div class="row" style="margin-bottom:28px">
+        <span id="s1a" class="chip">العنوان</span><span id="s1p" class="arrow">+</span><span id="s1b" class="chip">موضوع النص</span>
+      </div>
+      <div id="s1c" class="row" style="margin-bottom:44px"><span class="arrow">←</span><span class="chip y">افترض العلاقة</span></div>
+      <div id="s1d" class="note" style="margin-bottom:18px">المصحح كيقلّب على:</div>
+      <div class="row" style="position:relative">
+        <span id="s1e" class="chip" style="position:relative">المؤشرات
+          <svg id="s1ring" class="abs" style="left:-30px;top:-26px;overflow:visible" width="300" height="140" viewBox="0 0 300 140" fill="none"><path id="s1ringP" d="M262 26 C 200 -6, 40 2, 18 50 C 0 100, 120 132, 220 120 C 296 108, 300 50, 232 16" stroke="#FFC400" stroke-width="7" stroke-linecap="round"/></svg>
+        </span>
+        <span id="s1f" class="chip">فعل الافتراض</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 02 quotes card -->
+  <div id="s2" class="scene full">
+    <div class="card">
+      <div class="kick"><b>02</b>بين مزدوجتين</div>
+      <div class="row" style="margin-bottom:30px"><span id="s2a" class="chip">«استخرج»</span><span id="s2b" class="chip">«حدد»</span></div>
+      <div id="s2c" style="font:900 96px/1.2 var(--title);text-align:center;margin:10px 0 36px"><span style="color:var(--accent)">«</span> الكلمات من النص <span style="color:var(--accent)">»</span></div>
+      <div id="s2d" class="row" style="justify-content:center;font:800 44px var(--title)">الجواب الصحيح <span class="arrow">←</span> بعد <span id="s2e" class="mk">الدليل</span></div>
+    </div>
+  </div>
+
+  <!-- 03 semantic fields graphic (pip) -->
+  <div id="s3" class="scene full">
+    <div class="abs" style="left:96px;right:96px;top:300px">
+      <div class="kick"><b>03</b>الحقول الدلالية</div>
+      <div class="row" style="gap:28px;align-items:stretch;flex-wrap:nowrap;margin-top:10px">
+        <div id="f1" style="flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:30px;padding:30px">
+          <div style="font:800 40px var(--title);margin-bottom:20px">الحقل 1</div>
+          <div class="fp" style="height:26px;border-radius:9px;background:var(--surface-2);margin-bottom:14px"></div>
+          <div class="fp" style="height:26px;border-radius:9px;background:var(--surface-2);margin-bottom:14px;width:80%"></div>
+          <div class="fp" style="height:26px;border-radius:9px;background:var(--surface-2);width:62%"></div>
+        </div>
+        <div id="fArrow" style="display:grid;place-items:center;width:120px">
+          <svg width="120" height="80" viewBox="0 0 120 80" fill="none"><path id="fArrowP" d="M8 40 H 108 M 108 40 L 84 18 M 108 40 L 84 62" stroke="#FFC400" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          <div id="fRel" style="font:800 30px var(--title);color:var(--accent)">العلاقة</div>
+        </div>
+        <div id="f2" style="flex:1;background:var(--surface);border:1.5px solid var(--line);border-radius:30px;padding:30px">
+          <div style="font:800 40px var(--title);margin-bottom:20px">الحقل 2</div>
+          <div class="fp" style="height:26px;border-radius:9px;background:var(--surface-2);margin-bottom:14px"></div>
+          <div class="fp" style="height:26px;border-radius:9px;background:var(--surface-2);margin-bottom:14px;width:80%"></div>
+          <div class="fp" style="height:26px;border-radius:9px;background:var(--surface-2);width:62%"></div>
+        </div>
+      </div>
+      <div id="f3" class="row" style="justify-content:center;margin-top:30px"><span class="chip o" style="font-size:34px;padding:14px 24px">3 ألفاظ أو عبارات لكل حقل</span></div>
+      <div id="fCtx" class="row" style="justify-content:center;margin-top:22px"><span class="chip" style="font-size:34px;padding:14px 24px">العلاقة = <span class="mk" style="margin-right:8px;line-height:1.35;padding:2px 14px">حسب السياق</span></span></div>
+      <div class="note" id="fRelT" style="text-align:center;margin-top:44px">علاقات ممكنة:</div>
+      <div class="row" style="justify-content:center;margin-top:18px;gap:18px">
+        <span id="r1" class="chip">السببية</span><span id="r2" class="chip">سبب ← نتيجة</span><span id="r3" class="chip">التعليلية</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 04 checklist card -->
+  <div id="s4" class="scene full">
+    <div class="card" style="padding-top:36px;padding-bottom:22px">
+      <div class="kick"><b>04</b>شبكة التصحيح</div>
+      <div class="list">
+        <div class="it" id="k1"><span class="chk"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>التمكن من المهارة</div>
+        <div class="it" id="k2"><span class="chk"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>انسجام الأفكار</div>
+        <div class="it" id="k3"><span class="chk"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>الألفاظ المناسبة</div>
+        <div class="it" id="k4"><span class="chk"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>مراحل المنهجية</div>
+        <div class="it" id="k5"><span class="chk"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>الترتيب</div>
+        <div class="it" id="k6"><span class="chk"><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg></span>جمل صغار، واضحة ومباشرة</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 05 time graphic (pip) -->
+  <div id="s5" class="scene full">
+    <div class="abs" style="left:96px;right:96px;top:300px">
+      <div class="kick"><b>05</b>تدبير الوقت</div>
+      <div class="h" style="margin-bottom:34px"><span class="mk">3 ساعات</span> نهار الامتحان</div>
+      <div style="background:var(--surface);border:1.5px solid var(--line);border-radius:32px;padding:36px 40px;display:flex;flex-direction:column;gap:30px">
+        <div id="t1"><div class="row" style="justify-content:space-between;font:800 40px var(--title);margin-bottom:14px"><span>النصوص</span><span dir="ltr" style="color:var(--accent)">1:50</span></div><div class="bar" style="width:100%"></div></div>
+        <div id="t2"><div class="row" style="justify-content:space-between;font:800 40px var(--title);margin-bottom:14px"><span>الدروس اللغوية</span><span dir="ltr" style="color:var(--accent)">0:20</span></div><div class="bar" style="width:18.2%"></div></div>
+        <div id="t3"><div class="row" style="justify-content:space-between;font:800 40px var(--title);margin-bottom:14px"><span>التعبير والإنشاء</span><span dir="ltr" style="color:var(--accent)">0:40</span></div><div class="bar" style="width:36.4%"></div></div>
+        <div id="t4"><div class="row" style="justify-content:space-between;font:800 40px var(--title);margin-bottom:14px"><span>مراجعة الأجوبة</span><span dir="ltr" style="color:var(--accent)">0:10</span></div><div class="bar" style="width:9.1%"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 06 kinetic -->
+  <div id="s6" class="scene full">
+    <div class="abs" style="left:96px;right:96px;top:330px;display:flex;flex-direction:column;align-items:flex-start;gap:20px">
+      <span id="x1" class="chip" style="font-size:40px"><span style="color:var(--accent)">✕</span> جواب ناقص</span>
+      <span id="x2" class="chip" style="font-size:40px"><span style="color:var(--accent)">✕</span> سؤال خاوي</span>
+    </div>
+    <div id="kin" class="abs" style="left:0;right:0;top:620px;text-align:center">
+      <div style="position:relative;display:inline-block;padding:6px 44px;font:900 150px/1.1 var(--title);color:var(--ink)"><span id="swoosh" class="abs" style="inset:0;background:var(--accent);border-radius:30px;transform-origin:100% 50%;transform:rotate(-2deg)"></span><span style="position:relative">نص نقطة</span></div>
+      <div id="kinSub" style="position:relative;font:800 52px var(--title);margin-top:34px;text-shadow:var(--edge)">حسن ليك من زهر</div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div id="sCta" class="scene full">
+    <div class="card">
+      <div id="c1" class="row" style="gap:26px;margin-bottom:12px">
+        <span class="chk" style="width:96px;height:96px;border-radius:26px"><svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.6" stroke-linejoin="round"><path d="M6 3h12v18l-6-4-6 4z"/></svg></span>
+        <span class="h">سجّل الفيديو</span>
+      </div>
+      <div id="c2" class="note" style="margin-bottom:34px">وراجع بيه ليلة قبل الامتحان</div>
+      <div id="c3" class="row" style="gap:26px;margin-bottom:40px">
+        <span class="chk" style="width:96px;height:96px;border-radius:26px;background:var(--surface-2)"><svg width="50" height="50" viewBox="0 0 24 24" fill="none" stroke="#FFC400" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v7h16v-7M12 3v12M7 8l5-5 5 5"/></svg></span>
+        <span style="font:800 48px/1.3 var(--title)">بارطاجيه مع صاحبك<br><span style="color:var(--text-2);font-size:36px">اللي عندو الجهوي</span></span>
+      </div>
+      <div id="c4" class="row" style="justify-content:space-between;border-top:1.5px solid var(--line);padding-top:30px">
+        <span dir="ltr" style="font:800 40px var(--title)">@zakaria.faykhi</span>
+        <span class="chip y" style="font-size:34px;padding:14px 26px">تابع</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- chapter markers -->
+  <div id="m1" class="mark"><span class="n">01</span><span class="l">الفرضية</span></div>
+  <div id="m2" class="mark"><span class="n">02</span><span class="l">بين مزدوجتين</span></div>
+  <div id="m3" class="mark"><span class="n">03</span><span class="l">الحقول الدلالية</span></div>
+  <div id="m4" class="mark"><span class="n">04</span><span class="l">التعبير والإنشاء</span></div>
+  <div id="m5" class="mark"><span class="n">05</span><span class="l">تدبير الوقت</span></div>
+  <div id="m6" class="mark"><span class="n">06</span><span class="l">حتى سؤال ما يبقى خاوي</span></div>
+  <div id="zf" class="abs">ZF</div>
+
+  <audio id="sfx" class="clip" src="assets/sfx.wav" data-start="0" data-duration="140.8" data-track-index="2"></audio>
+
+  <div id="caps" class="full" style="pointer-events:none"></div>
+  <div id="wipe" class="abs"></div>
+</div>
+
+<script>
+(function(){
+  const DUR = 140.8, F = 1/30;
+  const tl = gsap.timeline({ paused: true });
+  window.__timelines = window.__timelines || {};
+  window.__timelines["main"] = tl;
+  const $ = (s) => document.querySelector(s);
+
+  // ---------- layouts: full / split / pip ----------
+  const L = {
+    full:  { x: 0, y: 0,    scale: 1,    clipPath: "circle(2400px at 520px 560px)" },
+    split: { x: 0, y: 700,  scale: 1,    clipPath: "circle(2400px at 520px 560px)" },
+    pip:   { x: -10, y: 1452, scale: 0.35, clipPath: "circle(330px at 520px 560px)" },
+  };
+  const LAYOUT = [ [0,"split"],[7.5,"full"],[16.3,"split"],[25.6,"full"],[32.9,"split"],[43.7,"full"],
+    [53.6,"pip"],[76.55,"full"],[81.45,"split"],[99.7,"full"],[101.4,"pip"],[118.85,"full"],[133.55,"split"] ];
+  const layoutAt = (t) => { let s = "full"; for (const [a, n] of LAYOUT) if (t >= a) s = n; return s; };
+  gsap.set("#footWrap", { ...L.split, opacity: 0 });
+  tl.to("#footWrap", { opacity: 1, duration: 0.35, ease: "power2.out" }, 1.85);
+  tl.fromTo("#sIntro", { opacity: 1 }, { opacity: 0, duration: 0.3 }, 1.8);
+  tl.fromTo("#i6", { scale: 0.6, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.4, ease: "back.out(1.7)" }, 0.2);
+  tl.fromTo("#i2", { y: 40, opacity: 0 }, { y: 0, opacity: 1, duration: 0.4, ease: "power3.out" }, 0.55);
+  LAYOUT.slice(1).forEach(([t, n]) => {
+    const instant = (t === 7.5 || t === 53.6 || t === 101.4 || t === 43.7);   // under a wipe
+    tl.to("#footWrap", { ...L[n], duration: instant ? 0.01 : 0.6, ease: "power3.inOut" }, instant ? t + 0.22 : t);
+    tl.to("#pipRing", { opacity: n === "pip" ? 1 : 0, duration: 0.2 }, (instant ? t + 0.22 : t) + (n === "pip" ? 0.3 : 0));
+  });
+  gsap.set("#pipRing", { x: 172 - 118, y: 1452 + 196 - 118 });
+
+  // ---------- camera punch-ins (on the video itself) ----------
+  gsap.set("#foot", { transformOrigin: "520px 600px", scale: 1 });
+  const PUNCH = [[3.7,1.12],[7.6,1],[12.0,1.12],[20.6,1],[27.0,1.12],[36.9,1],[44.1,1.12],[49.3,1],[76.55,1],[84.0,1.12],[92.1,1],[96.4,1.12],[99.8,1],[119.3,1.12],[124.2,1],[129.2,1.12],[133.5,1]];
+  PUNCH.forEach(([t, s]) => tl.to("#foot", { scale: s, duration: 0.28, ease: "power2.out" }, t));
+
+  // ---------- yellow highlighter wipe ----------
+  gsap.set("#wipe", { x: 2300, skewX: -14 });
+  [7.35, 43.5, 53.38, 101.18, 133.33].forEach((t) => {
+    tl.fromTo("#wipe", { x: 1500 }, { x: -1900, duration: 0.55, ease: "power2.inOut", immediateRender: false }, t);
+    tl.set("#wipe", { x: 2300 }, t + 0.56);
+  });
+
+  // ---------- scenes ----------
+  const pop = (sel, t, extra = {}) => tl.fromTo(sel, { opacity: 0, y: 26, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "back.out(1.4)", ...extra }, t - 2 * F);
+  const show = (sel, a, b, fromY = 40) => {
+    tl.fromTo(sel, { opacity: 0, y: fromY }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, a);
+    tl.to(sel, { opacity: 0, y: -30, duration: 0.3, ease: "power2.in" }, b - 0.3);
+  };
+  const markerBox = (bg, t) => tl.fromTo(bg, { scaleX: 0 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, t - 2 * F);
+
+  // index card
+  show("#sIdx", 1.9, 7.6);
+  gsap.utils.toArray("#sIdx .it").forEach((el, i) => pop(el, 2.2 + i * 0.3));
+  tl.to("#idxJ", { backgroundColor: "#FFC400", color: "#0B0B0C", duration: 0.2 }, 6.92);
+
+  // 01
+  show("#s1", 16.35, 25.75);
+  pop("#s1a", 16.9); pop("#s1p", 17.5); pop("#s1b", 17.9); pop("#s1c", 19.6); pop("#s1d", 20.62); pop("#s1e", 23.16); pop("#s1f", 24.1);
+  gsap.set("#s1ringP", { strokeDasharray: 900, strokeDashoffset: 900 });
+  tl.to("#s1ringP", { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, 23.4);
+
+  // 02
+  show("#s2", 32.95, 43.75);
+  pop("#s2a", 33.2); pop("#s2b", 33.5); pop("#s2c", 36.91); pop("#s2d", 40.88);
+  tl.fromTo("#s2e", { backgroundColor: "rgba(255,196,0,0)", color: "#F5F3EE" }, { backgroundColor: "#FFC400", color: "#0B0B0C", duration: 0.25 }, 42.6);
+
+  // 03 (pip graphic)
+  show("#s3", 53.55, 76.75, 0);
+  pop("#f1", 53.8); pop("#f2", 54.1);
+  gsap.utils.toArray("#s3 .fp").forEach((el, i) => tl.fromTo(el, { scaleX: 0, transformOrigin: "100% 50%" }, { scaleX: 1, duration: 0.3, ease: "power2.out" }, 49.4 > 53.8 ? 0 : 54.4 + i * 0.12));
+  pop("#f3", 54.9);
+  gsap.set("#fArrowP", { strokeDasharray: 260, strokeDashoffset: 260 });
+  tl.to("#fArrowP", { strokeDashoffset: 0, duration: 0.5, ease: "power2.out" }, 56.1); pop("#fRel", 56.3);
+  pop("#fCtx", 58.6); pop("#fRelT", 67.5); pop("#r1", 68.99); pop("#r2", 70.88); pop("#r3", 73.6);
+  [["#r1",68.99],["#r2",70.88],["#r3",73.6]].forEach(([s, t], i, A) => {
+    tl.to(s, { backgroundColor: "#FFC400", color: "#0B0B0C", borderColor: "#FFC400", duration: 0.2 }, t + 0.1);
+    if (A[i + 1]) tl.to(s, { backgroundColor: "#2A2724", color: "#F5F3EE", borderColor: "rgba(245,243,238,.14)", duration: 0.2 }, A[i + 1][1]);
+  });
+
+  // 04 behind-text + checklist
+  tl.fromTo("#behind", { opacity: 0, y: 60, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.3)" }, 79.2);
+  tl.to("#behind", { opacity: 0, duration: 0.25 }, 81.3);
+  gsap.set("#subjWrap", { opacity: 0 });
+  tl.set("#subjWrap", { opacity: 1 }, 76.92); tl.set("#subjWrap", { opacity: 0 }, 82.05);
+  show("#s4", 81.5, 99.85);
+  [["#k1",81.6],["#k2",83.3],["#k3",84.6],["#k4",86.9],["#k5",94.3],["#k6",96.6]].forEach(([s, t]) => pop(s, t));
+
+  // 05 time
+  show("#s5", 101.4, 118.95, 0);
+  [["#t1",104.39],["#t2",107.22],["#t3",110.07],["#t4",116.0]].forEach(([s, t]) => {
+    pop(s, t); tl.fromTo(s + " .bar", { scaleX: 0 }, { scaleX: 1, duration: 0.6, ease: "power3.out" }, t + 0.1);
+  });
+
+  // 06 kinetic
+  tl.set("#s6", { opacity: 1 }, 124.0); tl.set("#s6", { opacity: 0 }, 133.5);
+  gsap.set(["#x1", "#x2", "#kin"], { opacity: 0 });
+  pop("#x1", 124.23); pop("#x2", 129.26);
+  tl.to(["#x1", "#x2"], { opacity: 0, y: -20, duration: 0.25 }, 131.0);
+  gsap.set("#swoosh", { scaleX: 0 });
+  tl.set("#kin", { opacity: 1 }, 131.2);
+  tl.to("#swoosh", { scaleX: 1, duration: 0.3, ease: "power3.out" }, 131.22);
+  tl.fromTo("#kin > div", { opacity: 0, scale: 1.25 }, { opacity: 1, scale: 1, duration: 0.35, ease: "back.out(1.6)", stagger: 0.5 }, 131.25);
+  tl.to("#kin", { opacity: 0, duration: 0.2 }, 133.4);
+  tl.to("#caps", { opacity: 0, duration: 0.15 }, 131.2); tl.to("#caps", { opacity: 1, duration: 0.15 }, 133.4);
+
+  // CTA
+  tl.fromTo("#sCta", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.45, ease: "power3.out" }, 133.6);
+  gsap.set(["#c1", "#c2", "#c3", "#c4"], { opacity: 0 });
+  pop("#c1", 133.8); pop("#c2", 135.34); pop("#c3", 136.6); pop("#c4", 138.4);
+
+  // chapter markers
+  // visible windows (hidden while a card or scene with its own kicker covers the top)
+  [["#m1",7.8,16.3],["#m1",25.8,26.95],["#m2",27.0,32.9],["#m3",43.75,53.4],["#m4",76.95,79.1],["#m4",99.9,101.2],["#m6",119.2,133.4]].forEach(([s,a,b]) => {
+    tl.fromTo(s, { opacity: 0, x: 30 }, { opacity: 1, x: 0, duration: 0.4, ease: "power3.out", immediateRender: false }, a);
+    tl.to(s, { opacity: 0, duration: 0.2 }, b - 0.2);
+  });
+
+  // ---------- captions ----------
+  const ZONE = { full: 1110, split: 1455, pip: 1250 };
+  const CAPS = window.CAPTIONS;
+  const build = () => {
+    const host = $("#caps");
+    CAPS.forEach((c, gi) => {
+      const g = document.createElement("div"); g.className = "capg"; g.id = "cap" + gi;
+      let html = "", i = 0;
+      while (i < c.w.length) {
+        if (c.w[i].startsWith("*")) {
+          html += `<span class="hl" data-t="${c.t[i]}"><span class="bg"></span><span class="w" data-t="${c.t[i]}">${c.w[i].slice(1)}</span></span>`; i++;
+        } else { html += `<span class="w" data-t="${c.t[i]}">${c.w[i]}</span>`; i++; }
+      }
+      g.innerHTML = `<div class="ci" style="display:inline-block;transform-origin:50% 50%">${html}</div>`;
+      g.style.top = ZONE[layoutAt(c.t[0] + 0.05)] + "px";
+      host.appendChild(g);
+      const ci = g.firstChild, wpx = ci.getBoundingClientRect().width;
+      if (wpx > 980) ci.style.transform = `scale(${(980 / wpx).toFixed(3)})`;
+      const start = c.t[0] - 0.1;
+      const next = CAPS[gi + 1] ? CAPS[gi + 1].t[0] - 2 * F - 0.05 : DUR;
+      const out = Math.max(c.t[c.t.length - 1] + 0.3, Math.min(c.end + 0.35, next - 0.16));
+      tl.set(g, { opacity: 1 }, start);
+      g.querySelectorAll(".w").forEach((w) => {
+        const t = +w.dataset.t - 2 * F;
+        tl.fromTo(w, { opacity: 0, y: 18, scale: 0.85 }, { opacity: 1, y: 0, scale: 1, duration: 0.2, ease: "back.out(1.4)" }, t);
+      });
+      g.querySelectorAll(".hl").forEach((h) => {
+        const t = +h.dataset.t - 2 * F;
+        tl.fromTo(h.querySelector(".bg"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power3.out" }, t);
+        tl.fromTo(h.querySelectorAll(".w"), { color: "#F5F3EE" }, { color: "#0B0B0C", duration: 0.12 }, t + 0.06);
+      });
+      if (gi < CAPS.length - 1) tl.to(g, { opacity: 0, y: -14, duration: Math.min(0.15, next - out), ease: "power2.in" }, Math.min(out, next - 0.16));
+    });
+  };
+
+  tl.set({}, {}, DUR);
+  Promise.all(["900 80px Alexandria", "800 80px Alexandria", "600 30px Alexandria", "600 30px 'IBM Plex Sans Arabic'"].map((f) => document.fonts.load(f, "ابج abc"))).then(() => {
+    build();
+    tl.seek(0);
+  });
+})();
+</script>
+</body>
+</html>
