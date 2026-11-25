@@ -62,25 +62,23 @@
 
   /* wipe */
   #wipe{left:-260px;top:-240px;width:1600px;height:2400px;background:var(--accent);opacity:1}
-  #behind{left:0;right:0;top:300px;text-align:center;opacity:0}
-  #behind div{font:900 230px/1.05 var(--title);color:var(--text)}
-  #behind div.y{color:var(--accent)}
+  #behind{left:0;right:0;top:1400px;display:flex;justify-content:center;opacity:0;white-space:nowrap;text-shadow:0 0 3px rgba(0,0,0,.9),0 6px 24px rgba(0,0,0,.6)}
+  #behind span{display:inline-block;flex:none;font:900 118px/1.2 var(--title);color:var(--text);margin:0 10px}
+  #behind span.y{color:var(--ink);background:var(--accent);border-radius:26px;padding:0 26px;text-shadow:none}
   .bar{height:34px;border-radius:12px;background:var(--accent);transform-origin:100% 50%}
 </style>
 </head>
 <body>
-<div id="root" data-composition-id="main" data-start="0" data-duration="105.8" data-width="1080" data-height="1920">
+<div id="root" data-composition-id="main" data-start="0" data-duration="104.933" data-width="1080" data-height="1920">
 
   <!-- footage -->
   <div id="footWrap" class="full">
-    <video id="foot" class="clip" src="assets/source.mp4" data-start="0" data-duration="105.8" data-track-index="0" data-has-audio="true" playsinline></video>
+    <video id="foot" class="clip" src="assets/source.mp4" data-start="0" data-duration="104.933" data-track-index="0" data-has-audio="true" playsinline></video>
   </div>
 
   <!-- text behind the teacher (ch4) -->
-  <div id="behind" class="abs"><div>شبكة</div><div class="y">التصحيح</div></div>
-  <div id="subjWrap" class="full">
-    <video id="subj" class="clip" src="assets/subj.webm" data-start="56.400" data-duration="4.667" data-track-index="1" muted playsinline></video>
-  </div>
+  <!-- «شبكة التصحيح» big over the desk (in front of the footage) -->
+  <div id="behind" class="abs"><span>شبكة</span><span class="y">التصحيح</span></div>
 
   <div id="pipRing" class="abs"></div>
 
@@ -197,7 +195,6 @@
   <!-- 06 kinetic -->
   <div id="s6" class="scene full">
     <div class="abs" style="left:96px;right:96px;top:330px;display:flex;flex-direction:column;align-items:flex-start;gap:20px">
-      <span id="x1" class="chip" style="font-size:40px"><span style="color:var(--accent)">✕</span> جواب ناقص</span>
       <span id="x2" class="chip" style="font-size:40px"><span style="color:var(--accent)">✕</span> سؤال خاوي</span>
     </div>
     <div id="kin" class="abs" style="left:0;right:0;top:620px;text-align:center">
@@ -228,7 +225,7 @@
   <!-- chapter markers -->
   <div id="tabs"><div class="tb" id="tb1"><b>1</b>الفرضية</div><div class="tb" id="tb2"><b>2</b>الاستخراج</div><div class="tb" id="tb3"><b>3</b>الحقول</div><div class="tb" id="tb4"><b>4</b>الإنشاء</div><div class="tb" id="tb5"><b>5</b>الوقت</div><div class="tb" id="tb6"><b>6</b>الأجوبة</div></div>
 
-  <audio id="sfx" class="clip" src="assets/sfx.wav" data-start="0" data-duration="105.8" data-track-index="2"></audio>
+  <audio id="sfx" class="clip" src="assets/sfx.wav" data-start="0" data-duration="104.933" data-track-index="2"></audio>
 
   <div id="caps" class="full" style="pointer-events:none"></div>
   <div id="wipe" class="abs"></div>
@@ -237,7 +234,7 @@
 <script>
 (function(){
   const DUR = 140.8, F = 1/30;   // authored on the 140.8 s cut; REMAP maps it onto the tightened footage
-  const REMAP = [[2.1, 3.8666666666666667, 0], [3.966666666666667, 4.733333333333333, 1.8], [4.833333333333333, 6.566666666666666, 2.6], [6.733333333333333, 7.666666666666667, 4.3333], [8.966666666666667, 9.833333333333334, 5.2667], [10.133333333333333, 16.133333333333333, 6.1667], [16.266666666666666, 19.133333333333333, 12.1667], [19.3, 25.0, 15.0667], [25.333333333333332, 26.233333333333334, 20.7667], [26.6, 27.333333333333332, 21.6667], [31.333333333333332, 32.4, 22.4], [32.46666666666667, 33.36666666666667, 23.5], [33.43333333333333, 34.333333333333336, 24.4], [37.6, 39.5, 25.3], [39.6, 41.03333333333333, 27.2], [41.2, 44.63333333333333, 28.6333], [44.833333333333336, 45.0, 32.0667], [47.233333333333334, 52.46666666666667, 32.2667], [54.4, 55.4, 37.5], [55.46666666666667, 57.56666666666667, 38.5], [57.666666666666664, 58.46666666666667, 40.6], [58.666666666666664, 59.4, 41.4], [59.6, 62.166666666666664, 42.1333], [64.76666666666667, 68.0, 44.7333], [68.2, 71.26666666666667, 47.9667], [71.4, 74.43333333333334, 51.0667], [74.6, 76.9, 54.1], [77.26666666666667, 77.4, 56.4], [77.56666666666666, 89.33333333333333, 56.5333], [90.96666666666667, 91.1, 68.3333], [92.46666666666667, 95.16666666666667, 68.4667], [95.4, 96.0, 71.1667], [96.23333333333333, 96.33333333333333, 71.7667], [96.53333333333333, 99.4, 71.8667], [99.46666666666667, 100.2, 74.7667], [100.4, 101.33333333333333, 75.5], [102.23333333333333, 103.26666666666667, 76.4333], [103.36666666666666, 104.43333333333334, 77.4667], [104.66666666666667, 105.93333333333334, 78.5667], [107.13333333333334, 107.3, 79.8667], [107.8, 110.13333333333334, 80.0667], [110.36666666666666, 111.4, 82.4], [111.56666666666666, 112.4, 83.4333], [113.43333333333334, 113.63333333333334, 84.2667], [114.23333333333333, 115.96666666666667, 84.4667], [116.03333333333333, 119.23333333333333, 86.2], [119.9, 120.1, 89.4], [121.9, 122.03333333333333, 89.6], [122.23333333333333, 123.16666666666667, 89.7333], [123.26666666666667, 125.23333333333333, 90.6667], [125.4, 125.53333333333333, 92.6667], [125.6, 126.2, 92.8], [126.33333333333333, 126.5, 93.4], [128.1, 133.56666666666666, 93.6], [134.13333333333333, 140.8, 99.1]];
+  const REMAP = [[2.0, 6.533333333333333, 0], [6.633333333333334, 7.666666666666667, 4.5333], [8.866666666666667, 9.833333333333334, 5.5667], [10.033333333333333, 19.1, 6.5667], [19.2, 20.766666666666666, 15.6667], [20.933333333333334, 24.966666666666665, 17.2667], [25.233333333333334, 26.233333333333334, 21.3], [26.5, 27.2, 22.3], [31.133333333333333, 34.3, 23.0], [37.36666666666667, 43.833333333333336, 26.2], [47.0, 52.36666666666667, 32.7], [54.166666666666664, 58.3, 38.1], [58.43333333333333, 61.96666666666667, 42.2333], [64.46666666666667, 67.8, 45.7667], [67.9, 74.26666666666667, 49.1], [74.33333333333333, 76.6, 55.5], [77.3, 89.3, 57.8], [92.33333333333333, 94.93333333333334, 69.8], [95.06666666666666, 95.86666666666666, 72.4], [96.16666666666667, 99.93333333333334, 73.2], [100.03333333333333, 101.06666666666666, 77.0], [101.86666666666666, 104.13333333333334, 78.0333], [104.3, 105.83333333333333, 80.3333], [107.43333333333334, 109.83333333333333, 81.8667], [110.0, 112.36666666666666, 84.2667], [113.86666666666666, 119.13333333333334, 86.6667], [125.23333333333333, 125.86666666666666, 91.9667], [127.66666666666667, 133.23333333333332, 92.6], [133.7, 140.43333333333334, 98.2]];
   const R = (t) => { for (const [a, b, n] of REMAP) { if (t < a) return n; if (t <= b) return n + (t - a); } const L = REMAP[REMAP.length - 1]; return L[2] + (L[1] - L[0]); };
   const tl = gsap.timeline({ paused: true });
   const RAW = {};
@@ -317,8 +314,6 @@
   // 04 behind-text + checklist
   tl.fromTo("#behind", { opacity: 0, y: 60, scale: 0.9 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.3)" }, 79.2);
   tl.to("#behind", { opacity: 0, duration: 0.25 }, 81.3);
-  gsap.set("#subjWrap", { opacity: 0 });
-  tl.set("#subjWrap", { opacity: 1 }, 76.92); tl.set("#subjWrap", { opacity: 0 }, 82.05);
   show("#s4", 81.5, 99.85);
   [["#k1",81.6],["#k2",83.3],["#k3",84.6],["#k4",86.9],["#k5",94.3],["#k6",96.6]].forEach(([s, t]) => pop(s, t));
 
@@ -330,9 +325,9 @@
 
   // 06 kinetic
   tl.set("#s6", { opacity: 1 }, 124.0); tl.set("#s6", { opacity: 0 }, 133.5);
-  gsap.set(["#x1", "#x2", "#kin"], { opacity: 0 });
-  pop("#x1", 124.23); pop("#x2", 129.26);
-  tl.to(["#x1", "#x2"], { opacity: 0, y: -20, duration: 0.25 }, 131.0);
+  gsap.set(["#x2", "#kin"], { opacity: 0 });
+  pop("#x2", 129.26);
+  tl.to("#x2", { opacity: 0, y: -20, duration: 0.25 }, 131.0);
   gsap.set("#swoosh", { scaleX: 0 });
   tl.set("#kin", { opacity: 1 }, 131.2);
   tl.to("#swoosh", { scaleX: 1, duration: 0.3, ease: "power3.out" }, 131.22);
@@ -389,7 +384,7 @@
         RAW.fromTo(h.querySelector(".bg"), { scaleX: 0 }, { scaleX: 1, duration: 0.22, ease: "power3.out" }, t);
         RAW.fromTo(h.querySelectorAll(".w"), { color: "#F5F3EE" }, { color: "#0B0B0C", duration: 0.12 }, t + 0.06);
       });
-      if (gi < CAPS.length - 1) RAW.to(g, { opacity: 0, y: -14, duration: 0.14, ease: "power2.in" }, Math.max(start + 0.2, Math.min(out, next - 0.15)));
+      if (gi < CAPS.length - 1) { const at = Math.max(start + 0.05, Math.min(out, next - 0.15)); RAW.to(g, { opacity: 0, y: -14, duration: Math.max(0.04, Math.min(0.14, next - at - 0.01)), ease: "power2.in" }, at); }
     });
   };
 
