@@ -79,15 +79,14 @@ layouts:
   cards: "step / term cards over the footage, top area (y 300–900) so the face and hands stay clear"
   full-graphic: "full-screen explanation scene on dark ground (like the carousel slides), voice continues"
   behind-subject: "big title behind the teacher (needs cut-out): 1–2 times per video"
-  split: "graphic card on top (y 260–1000) + teacher footage below, for step explanations (ref2)"
-  pip: "face in a 220 px circle, bottom-left, on full-graphic scenes (ref2)"
+  explain: "teacher footage as a rounded card in the TOP half (x 72–1008, y 330–870, captions on the chest inside it), explanation below on black with green cards. Never move the teacher to the bottom."
 
 graphics:
   icons: "line icons 2.5 px, paper white"
   containers: "rounded cards #1E1C1A radius 36, yellow chips for levels"
   lists: "one row per spoken item, numbered yellow chips"
   3d: "never"
-  chapter-marker: "numbered marker top-right: big \"01\" + label (e.g. القراءة) for each tip (ref2)"
+  chapter-tabs: "row of numbered tabs at the top (1 الفرضية … 6 الأجوبة), active tab yellow"
   index-card: "after the hook: \"خطوة بخطوة\" card listing the 5 tips 01–05 (ref2)"
   annotations: "handwritten yellow scribbles (circle, arrow, underline) on key graphics (ref1)"
   kinetic-word: "one big word with yellow brush swoosh per video, e.g. «الجهوي» (ref3)"
@@ -155,4 +154,6 @@ Alternate them; never the same one twice in a row.
 | 2026-11-25 | Key word = full yellow box (stroke-under was unreadable on dark footage) | brand-book check |
 | 2026-11-25 | From refs: chapter markers 01–05, index card, graphic-top/footage-bottom, circle PiP, yellow scribbles, kinetic word with swoosh | "استلهم من هذو" |
 | 2026-11-25 | Cards/panels in dark green #173029 (~15%) | "اضف 15% من لون الأخضر الغامق" |
+| 2026-11-25 | Explain layout = footage card on top half, black below; chapter tabs row | user mockup: "أفضل من أن تهبطني للتحت" |
+| 2026-11-25 | Cut every pause and any no-speech opening | "أي فترة لا أتكلم فيها احذفها" |
 | 2026-11-25 | Cards, full graphic scenes, text behind subject; hook + CTA; 1080p | round 5 |
