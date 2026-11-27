@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="ar" dir="rtl" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <title>توسيع فكرة</title>
+    <script src="assets/vendor/gsap.min.js"></script>
+    <script src="assets/kit.js"></script>
+    <script src="assets/captions.js"></script>
+    <script src="assets/edit.js"></script>
+    <link rel="stylesheet" href="assets/tokens.css" />
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); }
+      #root { position: relative; width: 1080px; height: 1920px; overflow: hidden; background: var(--ground); direction: rtl; }
+      .layer { position: absolute; inset: 0; }
+      #cam { position: absolute; inset: 0; overflow: hidden; }
+      .hide { display: none; }
+      .paper { background-color: var(--paper);
+        background-image: linear-gradient(90deg, transparent 1036px, rgba(255,196,0,.75) 1036px, rgba(255,196,0,.75) 1040px, transparent 1040px),
+          repeating-linear-gradient(180deg, transparent 0 70px, #E3DED3 70px 72px); }
+      #bgGreen { background: radial-gradient(120% 70% at 50% 38%, #165440 0%, var(--green) 55%, #092a1f 100%); }
+      #bgDark { background: radial-gradient(110% 60% at 50% 40%, #1E1E21 0%, var(--ground) 70%); border-top: 6px solid var(--accent); }
+      .fbox { position: absolute; overflow: hidden; transform-origin: 50% 50%; }
+      .fbox video { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 0 0; }
+      #footBox { box-shadow: 0 30px 80px rgba(0,0,0,.35); }
+      #footBorder { position: absolute; inset: 0; border: 5px solid var(--accent); border-radius: inherit; pointer-events: none; }
+      #footDim { position: absolute; inset: 0; background: #000; }
+
+      .bw { position: absolute; left: 0; right: 0; text-align: center; font: 900 300px/1.25 var(--font-title); color: var(--paper); white-space: nowrap; }
+      .bw .in { position: relative; display: inline-block; padding: 0 30px; isolation: isolate; }
+      .bw .mk { position: absolute; left: 10px; right: 10px; bottom: 0.2em; height: 0.26em; background: var(--accent); transform-origin: 100% 50%; z-index: -1; }
+      .bw .tx { position: relative; }
+      .bw.yellow { color: var(--accent); }
+
+      .el { position: absolute; }
+      .chip { display: inline-flex; align-items: center; gap: 12px; font: 800 40px/1 var(--font-title); padding: 16px 30px; border-radius: 999px; white-space: nowrap; }
+      .chip.y { background: var(--accent); color: var(--ink); }
+      .chip.o { border: 3px solid var(--paper); color: var(--paper); }
+      .chip.p { background: var(--paper); color: var(--ink); }
+      .chip.k { background: var(--ink); color: var(--paper); }
+      .mkw { position: relative; display: inline-block; padding: 0 14px; isolation: isolate; }
+      .mkw > .mk { position: absolute; left: 0; right: 0; bottom: 0.08em; height: 0.42em; background: var(--accent); transform-origin: 100% 50%; border-radius: 4px; z-index: -1; }
+      .mkw.full > .mk { top: 0.14em; bottom: 0.04em; height: auto; border-radius: 10px; }
+      .ltr { direction: ltr; unicode-bidi: isolate; font-family: var(--font-title); }
+      #chips { top: 210px; left: 0; right: 0; display: flex; justify-content: center; gap: 14px; }
+
+      /* tracker */
+      #tracker { top: 150px; left: 60px; right: 60px; display: flex; gap: 10px; }
+      .tk { flex: 1; height: 64px; border-radius: 18px; display: flex; align-items: center; justify-content: center; gap: 8px; font: 800 24px/1 var(--font-title); white-space: nowrap; border: 2px solid rgba(128,128,128,.45); color: #8A8780; }
+      .tk b { font: 900 22px/1 var(--font-title); }
+      .tk.done { background: rgba(128,128,128,.18); color: inherit; }
+      .tk.cur { background: var(--accent); border-color: var(--accent); color: var(--ink); }
+      .onpaper .tk.done { color: var(--ink); } .ongreen .tk.done, .ondark .tk.done { color: var(--paper); }
+
+      /* tip titles */
+      .ttl { top: 300px; right: 72px; left: 410px; display: flex; flex-direction: column; gap: 14px; align-items: flex-start; }
+      .ttl .num { font: 900 34px/1 var(--font-title); padding: 12px 22px; border-radius: 14px; background: var(--ink); color: var(--accent); direction: ltr; }
+      .ttl h2 { font: 900 var(--h, 92px)/1.25 var(--font-title); color: var(--ink); white-space: nowrap; }
+      .ttl.light h2 { color: var(--paper); } .ttl.light .num { background: var(--accent); color: var(--ink); }
+      .ttl.light .mkw > span:last-child { color: var(--ink); }
+
+      /* S1 توسيع فكرة (paper) */
+      #s1Flow { top: 720px; left: 72px; right: 72px; display: flex; align-items: center; justify-content: center; gap: 26px; }
+      .fbx { font: 900 50px/1.2 var(--font-title); padding: 22px 34px; border-radius: 26px; white-space: nowrap; }
+      #s1A { background: #fff; border: 4px solid var(--ink); color: var(--ink); }
+      #s1B { background: var(--accent); color: var(--ink); }
+      #s1Arrow { width: 130px; height: 40px; transform-origin: 100% 50%; }
+      #s1Doc { top: 880px; left: 150px; right: 150px; background: #fff; border: 4px solid var(--ink); border-radius: 32px; padding: 26px 34px; display: flex; flex-direction: column; gap: 16px; box-shadow: 0 18px 40px rgba(0,0,0,.08); }
+      .part { display: flex; align-items: center; gap: 22px; border: 3px dashed #CFCBC2; border-radius: 20px; padding: 16px 22px; }
+      .part .lbl2 { font: 900 44px/1.25 var(--font-title); color: var(--ink); white-space: nowrap; }
+      .part .ln { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+      .part .ln i { display: block; height: 10px; border-radius: 5px; background: #E3DED3; }
+      .part .n { font: 900 30px/1 var(--font-title); background: var(--ink); color: var(--accent); border-radius: 12px; padding: 10px 14px; direction: ltr; }
+      #s1p2 .ln i { height: 10px; } #s1p2 { padding: 24px 22px; }
+      #s1Ex { top: 1420px; left: 72px; right: 72px; display: flex; flex-direction: column; align-items: center; gap: 18px; }
+      #s1Ex .q { font: 900 66px/1.3 var(--font-title); color: var(--ink); white-space: nowrap; }
+      /* S2 المقدمة (green) */
+      #s2Steps { top: 700px; left: 72px; right: 72px; display: flex; flex-direction: column; gap: 22px; }
+      .step { position: relative; background: rgba(245,243,238,.07); border: 2px solid rgba(245,243,238,.2); border-radius: 30px; padding: 24px 30px; display: flex; flex-direction: column; gap: 14px; }
+      .step .hl { position: absolute; inset: -2px; border: 5px solid var(--accent); border-radius: 30px; pointer-events: none; }
+      .step h3 { display: flex; align-items: center; gap: 18px; font: 900 52px/1.2 var(--font-title); color: var(--paper); }
+      .step h3 b { font: 900 34px/1 var(--font-title); background: var(--accent); color: var(--ink); border-radius: 14px; padding: 10px 16px; direction: ltr; }
+      .step .sub { font: 700 38px/1.3 var(--font-caption); color: #CFCBC2; }
+      .quote { font: 700 42px/1.45 var(--font-caption); color: var(--ink); background: var(--paper); border-radius: 20px; padding: 16px 24px; }
+      .quote .mkw { padding: 0 6px; } .quote .mkw > .mk { height: 0.36em; }
+      .qs { display: flex; flex-wrap: wrap; gap: 14px; }
+      .qs .chip { font: 800 36px/1 var(--font-title); padding: 14px 24px; }
+      /* S3 العرض (paper) */
+      #s3Grid { top: 720px; left: 72px; right: 72px; background: #fff; border: 4px solid var(--ink); border-radius: 32px; padding: 30px 40px 20px; }
+      #s3Grid h3 { font: 900 54px/1.2 var(--font-title); color: var(--ink); margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+      #s3Grid h3 small { font: 700 32px/1 var(--font-caption); color: #6B675F; }
+      .row { display: flex; align-items: center; gap: 22px; padding: 22px 0; border-top: 2px solid #E3DED3; }
+      .box { position: relative; width: 62px; height: 62px; flex: none; border-radius: 14px; border: 4px solid var(--ink); }
+      .box .tick { position: absolute; inset: -4px; border-radius: 14px; background: var(--accent); display: grid; place-items: center; }
+      .box .tick svg { width: 44px; height: 44px; }
+      .row .txt { font: 800 48px/1.3 var(--font-title); color: var(--ink); }
+      /* S4 الدعم (dark band) */
+      #s4Title { top: 925px; left: 0; right: 0; text-align: center; font: 900 84px/1.25 var(--font-title); color: var(--paper); }
+      #s4Title small { display: block; font: 700 40px/1.3 var(--font-caption); color: #A9A6A0; }
+      #s4Title .mkw > span:last-child { color: var(--ink); }
+      #s4Opts { top: 1150px; left: 60px; right: 60px; display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+      #s4Opts > :nth-child(1) { grid-column: 1; grid-row: 1; } #s4Opts > :nth-child(2) { grid-column: 2; grid-row: 1; } #s4Opts > :nth-child(3) { grid-column: 3; grid-row: 1; }
+      .opt { background: rgba(245,243,238,.06); border: 2px solid rgba(245,243,238,.2); border-radius: 30px; padding: 26px 16px 24px; display: flex; flex-direction: column; align-items: center; gap: 14px; min-height: 380px; }
+      .opt .n { font: 900 30px/1 var(--font-title); background: var(--accent); color: var(--ink); border-radius: 12px; padding: 10px 14px; direction: ltr; }
+      .opt h4 { font: 900 44px/1.25 var(--font-title); color: var(--paper); text-align: center; }
+      .opt .chip { font-size: 32px; padding: 12px 20px; }
+      /* S6 الخلاصة (paper) */
+      #s6Card { top: 700px; left: 72px; right: 72px; background: #fff; border: 4px solid var(--ink); border-radius: 32px; padding: 30px 34px; display: flex; flex-direction: column; gap: 26px; }
+      .sec { display: flex; flex-direction: column; gap: 16px; }
+      .sec + .sec { border-top: 2px solid #E3DED3; padding-top: 24px; }
+      .sec .hd { display: flex; align-items: center; gap: 16px; }
+      .sec .hd .chip { font-size: 44px; padding: 14px 30px; }
+      .sec .hd em { font: 800 34px/1 var(--font-title); font-style: normal; color: #6B675F; }
+      .sec .cs { display: flex; flex-wrap: wrap; gap: 14px; min-height: 70px; }
+      .sec .cs .chip { font: 800 36px/1 var(--font-title); padding: 14px 24px; background: #EFECE5; color: var(--ink); }
+      .sec .cs .chip.y { background: var(--accent); }
+      /* CTA + end */
+      .ic { top: 220px; font-size: 46px; padding: 18px 32px; }
+      .ic svg { width: 46px; height: 46px; }
+      #icSave { right: 80px; } #icSend { left: 80px; }
+      #endSheet { background: var(--ground); border-top: 8px solid var(--accent); }
+      #endLogo { top: 640px; left: 450px; width: 180px; height: 180px; border-radius: 44px; background: var(--accent); display: grid; place-items: center; }
+      #endLogo span { font: 900 86px/1 var(--font-title); color: var(--ink); letter-spacing: -4px; direction: ltr; }
+      #endName { top: 880px; left: 0; right: 0; text-align: center; font: 900 66px/1.2 var(--font-title); color: var(--paper); direction: ltr; }
+      #endHandle { top: 975px; left: 0; right: 0; text-align: center; font: 600 42px/1.2 var(--font-title); color: var(--text-2); direction: ltr; }
+      #endCta { top: 1120px; left: 0; right: 0; text-align: center; font: 900 70px/1.3 var(--font-title); color: var(--paper); }
+      #endCta .mkw > span:last-child { color: var(--ink); }
+
+      /* captions */
+      .cap { position: absolute; left: 40px; right: 40px; text-align: center; white-space: nowrap; font-family: var(--font-caption); color: var(--text); text-shadow: var(--cap-edge); direction: rtl; }
+      .cap .l1, .cap .l2 { position: relative; line-height: 1.4; }
+      .cap .w { display: inline-block; margin: 0 9px; font-weight: 700; font-size: 66px; }
+      .cap .w.s { font-family: var(--font-title); font-weight: 900; font-size: 86px; color: var(--ink); text-shadow: none; position: relative; padding: 0 14px; isolation: isolate; }
+      .cap .w.s .mk { position: absolute; left: 0; right: 0; top: 0.18em; bottom: 0.1em; background: var(--accent); border-radius: 10px; transform-origin: 100% 50%; z-index: -1; }
+      .cap .w.s .tx { position: relative; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="121.9" data-width="1080" data-height="1920">
+      <div id="cam">
+        <div id="bgPaper1" class="layer paper hide"></div>
+        <div id="bgPaper2" class="layer paper hide"></div>
+        <div id="bgGreen" class="layer hide"></div>
+        <svg id="irisEdge" class="layer" width="1080" height="1920" fill="none" style="display:none"><polygon id="irisPoly" stroke="#FFC400" stroke-width="12" stroke-linejoin="round"/></svg>
+        <div id="bgDark" class="layer hide"></div>
+
+        <div id="footBox" class="fbox">
+          <video id="foot" src="assets/media/source.mp4" data-start="0" data-duration="119.5333" data-has-audio="true" playsinline></video>
+          <div id="footDim"></div><div id="footBorder"></div>
+        </div>
+        <div id="behind" class="layer" style="z-index:0"></div>
+
+        <div id="chips" class="el"><span class="chip y">الامتحان الجهوي</span><span class="chip o">التعبير والإنشاء</span><span class="chip o ltr">1ère BAC</span></div>
+        <div id="tracker" class="el">
+          <div class="tk"><b class="ltr">1</b>الفكرة</div><div class="tk"><b class="ltr">2</b>المقدمة</div><div class="tk"><b class="ltr">3</b>العرض</div>
+          <div class="tk"><b class="ltr">4</b>الدعم</div><div class="tk"><b class="ltr">5</b>الخاتمة</div><div class="tk"><b class="ltr">6</b>الخلاصة</div>
+        </div>
+
+        <!-- S1 توسيع فكرة (paper) -->
+        <div id="s1Title" class="el ttl" style="--h:84px"><span class="num">01</span><h2><span class="mkw"><i id="s1TitleMk" class="mk"></i><span>توسيع فكرة</span></span></h2></div>
+        <div id="s1Flow" class="el"><span id="s1A" class="fbx">فكرة وحدة</span>
+          <svg id="s1Arrow" viewBox="0 0 130 40" fill="none" stroke="#0B0B0C" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"><path d="M122 20H10M28 4L10 20l18 16"/></svg>
+          <span id="s1B" class="fbx">موضوع متكامل</span></div>
+        <div id="s1Doc" class="el">
+          <div id="s1p1" class="part" data-keep="1"><span class="n">1</span><span class="lbl2 mkw"><i id="s1p1Mk" class="mk"></i><span>مقدمة</span></span><span class="ln"><i></i><i style="width:70%"></i></span></div>
+          <div id="s1p2" class="part" data-keep="1"><span class="n">2</span><span class="lbl2 mkw"><i id="s1p2Mk" class="mk"></i><span>عرض</span></span><span class="ln"><i></i><i></i><i></i><i style="width:60%"></i></span></div>
+          <div id="s1p3" class="part" data-keep="1"><span class="n">3</span><span class="lbl2 mkw"><i id="s1p3Mk" class="mk"></i><span>خاتمة</span></span><span class="ln"><i></i><i style="width:55%"></i></span></div>
+        </div>
+        <div id="s1Ex" class="el"><span class="chip k" style="font-size:34px;padding:12px 26px">مثلاً</span>
+          <div class="q">«التكنولوجيا <span class="mkw"><i id="s1ExMk" class="mk"></i><span>سيف ذو حدين</span></span>»</div></div>
+
+        <!-- S2 المقدمة (green) -->
+        <div id="s2Title" class="el ttl light"><span class="num">02</span><h2><span class="mkw full"><i id="s2TitleMk" class="mk"></i><span>المقدمة</span></span></h2></div>
+        <div id="s2Steps" class="el">
+          <div id="st1" class="step" data-keep="1"><i id="st1Hl" class="hl"></i><h3><b>1</b>التمهيد</h3>
+            <div id="st1Sub" class="sub" data-keep="1">قدّم الموضوع بشكل عام</div>
+            <div id="st1Ex" class="quote" data-keep="1">«يعيش الإنسان اليوم <span class="mkw"><i id="st1ExMk" class="mk"></i><span>عصر التكنولوجيا</span></span>»</div></div>
+          <div id="st2" class="step" data-keep="1"><i id="st2Hl" class="hl"></i><h3><b>2</b>تقديم الفكرة</h3>
+            <div id="st2Ex" class="quote" data-keep="1">«من الأفكار المتداولة أن التكنولوجيا <span class="mkw"><i id="st2ExMk" class="mk"></i><span>سيف ذو حدين</span></span>»</div></div>
+          <div id="st3" class="step" data-keep="1"><i id="st3Hl" class="hl"></i><h3><b>3</b>صياغة الإشكالية</h3>
+            <div class="qs"><span id="q1" data-keep="1" class="chip p">ما التكنولوجيا؟</span><span id="q2" data-keep="1" class="chip p">كيف تؤثر على حياة الإنسان؟</span>
+              <span id="q3" data-keep="1" class="chip p">ما منافعها؟</span><span id="q4" data-keep="1" class="chip y">وما سلبياتها؟</span></div></div>
+        </div>
+
+        <!-- S3 العرض (paper 2) -->
+        <div id="s3Title" class="el ttl"><span class="num">03</span><h2><span class="mkw"><i id="s3TitleMk" class="mk"></i><span>العرض</span></span></h2></div>
+        <div id="s3Grid" class="el"><h3>الشرح والتحليل <small>جاوب على أسئلة الإشكالية</small></h3>
+          <div class="row"><span class="box"><span id="s3k1" class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span></span><span class="txt mkw"><i id="s3k1Mk" class="mk"></i><span>عرّف المفهوم: التكنولوجيا</span></span></div>
+          <div class="row"><span class="box"><span id="s3k2" class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span></span><span class="txt mkw"><i id="s3k2Mk" class="mk"></i><span>الجانب الإيجابي</span></span></div>
+          <div class="row"><span class="box"><span id="s3k3" class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span></span><span class="txt mkw"><i id="s3k3Mk" class="mk"></i><span>الجانب السلبي</span></span></div>
+          <div class="row"><span class="box"><span id="s3k4" class="tick"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12.5l5 5L20 6.5"/></svg></span></span><span class="txt mkw"><i id="s3k4Mk" class="mk"></i><span>كيف تؤثر على الإنسان</span></span></div>
+        </div>
+
+        <!-- S4 الدعم (dark band) -->
+        <div id="s4Title" class="el"><span class="mkw full"><i id="s4TitleMk" class="mk"></i><span>ادعم</span></span> الشرح والتحليل<small>بواحد من هادو</small></div>
+        <div id="s4Opts" class="el">
+          <div id="s4o1" class="opt" data-keep="1"><span class="n">01</span><h4>مثال من<br>الواقع</h4><span id="s4o1b" data-keep="1" class="chip y">الأسهل</span></div>
+          <div id="s4o2" class="opt" data-keep="1"><span class="n">02</span><h4>استشهاد</h4><span id="s4c1" data-keep="1" class="chip p">آية قرآنية</span><span id="s4c2" data-keep="1" class="chip p">قول عالم</span><span id="s4c3" data-keep="1" class="chip p">بيت شعري</span></div>
+          <div id="s4o3" class="opt" data-keep="1"><span class="n">03</span><h4>مقارنة</h4><span id="s4c4" data-keep="1" class="chip p">بين شيئين</span></div>
+        </div>
+
+        <!-- S6 الخلاصة (paper) -->
+        <div id="s6Title" class="el ttl"><span class="num">06</span><h2><span class="mkw"><i id="s6TitleMk" class="mk"></i><span>الخلاصة</span></span></h2></div>
+        <div id="s6Card" class="el">
+          <div class="sec"><div class="hd"><span id="s6h1" data-keep="1" class="chip k">المقدمة</span><em id="s6n1" data-keep="1"><span class="ltr">3</span> مراحل</em></div>
+            <div class="cs"><span id="c11" data-keep="1" class="chip">التمهيد</span><span id="c12" data-keep="1" class="chip">تقديم الفكرة</span><span id="c13" data-keep="1" class="chip y">صياغة الإشكالية</span></div></div>
+          <div class="sec"><div class="hd"><span id="s6h2" data-keep="1" class="chip k">العرض</span></div>
+            <div class="cs"><span id="c21" data-keep="1" class="chip">تعريف المفهوم</span><span id="c22" data-keep="1" class="chip y">الشرح والتحليل</span><span id="c23" data-keep="1" class="chip">الجواب على الأسئلة</span>
+              <span id="c24" data-keep="1" class="chip">استشهاد</span><span id="c25" data-keep="1" class="chip">مقارنة</span><span id="c26" data-keep="1" class="chip">مثال من الواقع</span></div></div>
+          <div class="sec"><div class="hd"><span id="s6h3" data-keep="1" class="chip k">الخاتمة</span></div>
+            <div class="cs"><span id="c31" data-keep="1" class="chip">خلاصة</span><span id="c32" data-keep="1" class="chip y">رأيك الشخصي</span></div></div>
+        </div>
+
+        <div id="icSave" class="el chip p ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.4" stroke-linejoin="round"><path d="M6 3.5h12v17l-6-4.5-6 4.5z"/></svg>احفظ</div>
+        <div id="icSend" class="el chip y ic"><svg viewBox="0 0 24 24" fill="none" stroke="#0B0B0C" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 3L3 10.5l7 3 3 7z"/><path d="M10 13.5L21 3"/></svg>صيفطو لصاحبك</div>
+      </div>
+
+      <div id="endSheet" class="layer hide"></div>
+      <div id="caps" class="layer"></div>
+      <div id="endLogo" class="el"><span>ZF</span></div>
+      <div id="endName" class="el">PROF ZAKARIA FAYKHI</div>
+      <div id="endHandle" class="el">@zakaria.faykhi</div>
+      <div id="endCta" class="el">احفظ الفيديو<br><span class="mkw full"><i id="endCtaMk" class="mk"></i><span>وصيفطو لصاحبك</span></span></div>
+    </div>
+
+    <script>
+      const $ = (id) => document.getElementById(id);
+      const blurF = (b) => (b > 0.2 ? `blur(${b.toFixed(2)}px)` : "none");
+      const FACES = ['900 300px "Alexandria"', '800 60px "Alexandria"', '600 40px "Alexandria"', '700 66px "Plex Arabic"', '600 40px "Plex Arabic"', '400 40px "Plex Arabic"'];
+      Promise.all(FACES.map((f) => document.fonts.load(f, "الاستفهام AB 0.5"))).then(() => document.fonts.ready).then(() => {
+        const E = window.EDIT;
+        const bws = E.BEHIND.map((B) => {
+          const el = document.createElement("div"); el.className = "bw" + (B.yellow ? " yellow" : "");
+          el.style.fontSize = B.size + "px"; el.style.top = B.top + "px";
+          el.innerHTML = `<span class="in"${B.ltr ? ' dir="ltr"' : ""}>${B.mk ? '<i class="mk"></i>' : ""}<span class="tx"${B.ltr ? ' style="direction:ltr;unicode-bidi:isolate;display:inline-block"' : ""}>${B.ltr ? "\u2066" + B.text + "\u2069" : B.text}</span></span>`;
+          $("behind").appendChild(el); return { el, mk: el.querySelector(".mk") };
+        });
+        const word = (w) => { const s = w.startsWith("*"); w = w.replace(/^\*/, "");
+          return s ? `<span class="w s"><i class="mk"></i><span class="tx">${w}</span></span>` : `<span class="w">${w}</span>`; };
+        const caps = E.CAPS.map((c) => {
+          const el = document.createElement("div"); el.className = "cap";
+          el.innerHTML = `<div class="l1">${c.l1.map(word).join("")}</div><div class="l2">${c.l2.map(word).join("")}</div>`;
+          $("caps").appendChild(el);
+          const ws = (sel) => [...el.querySelectorAll(sel + " .w")].map((w) => ({ w, mk: w.querySelector(".mk") }));
+          return { el, l1: ws(".l1"), l2: ws(".l2") };
+        });
+        const tks = [...document.querySelectorAll("#tracker .tk")];
+        function place(box, vid, B, x) {
+          Object.assign(box.style, { left: B.x + "px", top: B.y + "px", width: B.w + "px", height: B.h + "px", borderRadius: B.r + "px",
+            scale: `${x.s || 1}`, opacity: x.o, clipPath: x.clip > 0.5 ? `inset(0 0 ${x.clip.toFixed(1)}px 0)` : "none" });
+          Object.assign(vid.style, { translate: `${(B.ax - B.fx * B.k).toFixed(2)}px ${(B.ay - B.fy * B.k).toFixed(2)}px`, scale: `${B.k}` });
+        }
+        const paint = (id, st) => { const el = $(id); if (!el) return;
+          if (st.p !== undefined && st.on === undefined) { el.style.transform = `scaleX(${st.p})`; return; }
+          if (el.dataset.keep) { el.style.display = ""; el.style.visibility = st.on ? "visible" : "hidden"; } else el.style.display = st.on ? "" : "none";
+          if (!st.on) return;
+          Object.assign(el.style, { translate: `0px ${(st.y || 0).toFixed(2)}px`, opacity: st.o, filter: blurF(st.blur || 0), scale: `${st.s ?? 1}` }); };
+
+        function render(f) {
+          const S = E.sceneAt(f), F = S.foot, C = S.cam, B = S.bg;
+          Object.assign($("cam").style, { transformOrigin: `${C.f.x}px ${C.f.y}px`, scale: `${C.s}`, filter: blurF(C.blur) });
+          $("bgPaper1").classList.toggle("hide", !B.paper1); $("bgGreen").classList.toggle("hide", !B.green);
+          $("bgPaper2").classList.toggle("hide", !B.paper2); $("bgDark").classList.toggle("hide", !B.dark);
+          { const r = B.greenR, c = { x: 540, y: 1200 }, q = r + 5, on = B.green && r < 2650;
+            $("bgGreen").style.clipPath = on ? `polygon(${c.x}px ${c.y - r}px, ${c.x + r}px ${c.y}px, ${c.x}px ${c.y + r}px, ${c.x - r}px ${c.y}px)` : "none";
+            $("irisEdge").style.display = on && r > 1 ? "" : "none";
+            if (on) { $("irisPoly").setAttribute("points", `${c.x},${c.y - q} ${c.x + q},${c.y} ${c.x},${c.y + q} ${c.x - q},${c.y}`); $("irisEdge").style.opacity = 1 - clamp((r - 900) / 900); } }
+          if (B.dark) $("bgDark").style.translate = `0px ${B.darkY.toFixed(1)}px`;
+          $("footBox").style.display = F.o > 0.001 ? "" : "none";
+          place($("footBox"), $("foot"), F.box, F);
+          $("footDim").style.opacity = F.dim; $("footBorder").style.opacity = clamp(F.box.bw / 5);
+          S.behind.forEach((W, i) => { const D = bws[i]; D.el.style.display = W.on && F.full ? "" : "none"; if (!W.on) return;
+            Object.assign(D.el.style, { translate: `0px ${W.y.toFixed(2)}px`, opacity: W.o, filter: blurF(W.blur), scale: `${W.sc.toFixed(4)}` });
+            if (D.mk) D.mk.style.transform = `scaleX(${W.mk})`; });
+          for (const id in S.ui) paint(id, S.ui[id]);
+          const tr = $("tracker"); tr.className = "el " + (B.green ? "ongreen" : B.dark ? "ondark" : "onpaper");
+          tks.forEach((k, i) => { k.classList.toggle("cur", i === S.tip); k.classList.toggle("done", S.tip >= 0 && i < S.tip); });
+          const es = S.ui.endSheet; $("endSheet").classList.toggle("hide", !es.on); if (es.on) $("endSheet").style.translate = `0px ${es.y}px`;
+          const zone = S.zone;
+          S.caps.forEach((c, i) => { const D = caps[i], vis = c.visible && zone;
+            D.el.style.display = vis ? "" : "none"; if (!vis) return;
+            D.el.style.top = `${E.ZONE_TOP[zone === "band" ? "band" : "full"]}px`;
+            Object.assign(D.el.style, { translate: `0px ${c.exit.y}px`, opacity: c.exit.o, filter: blurF(c.exit.blur) });
+            const pw = (els, st) => els.forEach((w, k) => { const s = st[k]; Object.assign(w.w.style, { translate: `0px ${s.y.toFixed(2)}px`, opacity: s.o, filter: blurF(s.blur) }); if (w.mk) w.mk.style.transform = `scaleX(${s.mk})`; });
+            pw(D.l1, c.l1); pw(D.l2, c.l2); });
+        }
+        const tl = gsap.timeline({ paused: true }), proxy = { f: 0 }, FR = Math.round(E.DUR * E.FPS);
+        tl.to(proxy, { f: FR, duration: E.DUR, ease: "none", onUpdate: () => render(Math.min(FR - 1, Math.round(proxy.f))) }, 0);
+        render(0);
+        window.__timelines = window.__timelines || {}; window.__timelines["main"] = tl;
+      });
+    </script>
+  </body>
+</html>
