@@ -24,3 +24,5 @@ projects/*/covers/*.jpg
 projects/*/covers/*.png
 projects/*/media-1080/
 projects/*/previews/
+projects/*/stories/*.jpg
+projects/*/stories/*.woff2
