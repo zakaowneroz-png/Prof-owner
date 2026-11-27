@@ -20,3 +20,7 @@ projects/*/audio/*.mp3
 projects/*/audio/sfx/
 *.mp4
 *.wav
+projects/*/covers/*.jpg
+projects/*/covers/*.png
+projects/*/media-1080/
+projects/*/previews/
