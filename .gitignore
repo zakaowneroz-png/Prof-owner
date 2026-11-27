@@ -12,3 +12,11 @@ projects/*/renders/
 projects/*/work/roto/
 projects/*/work/check.json
 .hyperframes/
+deliver/
+projects/*/comp/assets/media/
+projects/*/renders/
+projects/*/audio/*.wav
+projects/*/audio/*.mp3
+projects/*/audio/sfx/
+*.mp4
+*.wav

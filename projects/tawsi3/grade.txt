@@ -1,0 +1,1 @@
+colorchannelmixer=rr=0.952:gg=0.995:bb=1.066,lutrgb=r='val*0.78':g='val*0.78':b='val*0.78'

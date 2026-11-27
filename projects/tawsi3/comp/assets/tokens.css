@@ -1,0 +1,29 @@
+/* Prof Zakaria Faykhi — brand tokens (brand/frame.md) */
+@font-face { font-family: "Alexandria"; src: url("fonts/alexandria-arabic-600-normal.woff2") format("woff2"); font-weight: 600; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200E, U+2010-2011, U+204F, U+2E41; }
+@font-face { font-family: "Alexandria"; src: url("fonts/alexandria-arabic-800-normal.woff2") format("woff2"); font-weight: 800; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200E, U+2010-2011, U+204F, U+2E41; }
+@font-face { font-family: "Alexandria"; src: url("fonts/alexandria-arabic-900-normal.woff2") format("woff2"); font-weight: 900; unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF, U+200C-200E, U+2010-2011, U+204F, U+2E41; }
+@font-face { font-family: "Alexandria"; src: url("fonts/alexandria-latin-600-normal.woff2") format("woff2"); font-weight: 600; unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Alexandria"; src: url("fonts/alexandria-latin-800-normal.woff2") format("woff2"); font-weight: 800; unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Alexandria"; src: url("fonts/alexandria-latin-900-normal.woff2") format("woff2"); font-weight: 900; unicode-range: U+0000-00FF, U+2000-206F, U+20AC; }
+@font-face { font-family: "Plex Arabic"; src: url("fonts/ibm-plex-sans-arabic-arabic-400-normal.woff2") format("woff2"); font-weight: 400; }
+@font-face { font-family: "Plex Arabic"; src: url("fonts/ibm-plex-sans-arabic-arabic-600-normal.woff2") format("woff2"); font-weight: 600; }
+@font-face { font-family: "Plex Arabic"; src: url("fonts/ibm-plex-sans-arabic-arabic-700-normal.woff2") format("woff2"); font-weight: 700; }
+
+@font-face { font-family: "Amiri Quran"; src: url("fonts/amiri-quran-arabic-400-normal.woff2") format("woff2"); font-weight: 400; }
+
+:root {
+  --ground: #0B0B0C;
+  --surface: #1E1E21;
+  --line: #2F2F33;
+  --text: #F5F3EE;
+  --text-2: #A9A6A0;
+  --accent: #FFC400;
+  --accent-2: #FFD84D;
+  --green: #0F3B2C;
+  --paper: #F5F3EE;
+  --ink: #0B0B0C;
+  --font-title: "Alexandria", sans-serif;
+  --font-caption: "Plex Arabic", "Alexandria", sans-serif;
+  --cap-edge: 0 0 1.5px rgba(0,0,0,.95), 0 1px 3px rgba(0,0,0,.75);
+  --edge: 72px;
+}
