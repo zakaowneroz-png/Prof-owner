@@ -1,8 +1,11 @@
 // توسيع فكرة — the whole edit is a pure function of time (rough-cut timeline, s). Voice is sample-exact: no drift map needed.
 window.EDIT = (() => {
-  const FPS = 30, CLIP = 119.5333, END_IN = 119.53, DUR = 121.9;
+  const FPS = 30, CLIP = 115.2333, END_IN = 115.2333, DUR = 117.6, END_D = 119.53;
+  // real (cut v2) time -> design time: [realStart, designStart, rate]
+  const SEG = [[0.0, 0.0, 1], [3.9667, 3.9333, 1], [6.1, 6.0667, 1], [7.4667, 7.4334, 1], [7.4667, 7.4334, 0.75005], [8.5333, 8.2333, 1], [11.9333, 12.1, 1], [16.6333, 16.9333, 1], [17.8333, 18.1333, 1], [18.5667, 19.1667, 1], [21.6, 22.2, 1], [22.5333, 23.2667, 1], [23.9, 24.6333, 1], [26.2, 26.9333, 1], [27.3, 28.1667, 1], [31.2333, 32.1, 0], [31.2667, 32.1, 1], [34.5, 35.3667, 1], [37.3667, 38.2333, 1], [38.5667, 39.4333, 1], [42.2333, 43.1, 1], [43.6667, 44.5667, 1], [46.9667, 47.8667, 1], [48.2, 49.1, 1], [49.4333, 50.8333, 1], [52.2333, 53.8, 1], [53.9333, 55.6333, 1], [57.8333, 59.5333, 1], [59.2333, 60.9333, 1], [59.7333, 61.4667, 1], [60.6, 62.7, 1], [61.3667, 63.5333, 1], [64.3, 66.5333, 1], [66.3667, 68.6, 1], [66.7667, 69.0333, 1], [68.4, 70.9333, 1], [71.0667, 73.6333, 1], [73.9, 76.4667, 1], [76.3667, 78.9667, 1], [78.4333, 81.2333, 1], [78.9, 81.7667, 1], [80.5667, 83.4333, 1], [83.8667, 86.8, 1], [85.8, 88.7333, 1], [91.6333, 94.5667, 1], [94.2333, 97.2, 1], [95.4667, 98.4333, 1], [96.7333, 99.7667, 1], [96.9333, 100.3333, 1], [102.1333, 105.5333, 0], [102.1667, 105.5333, 1], [106.9, 110.6, 1], [109.1, 112.8, 0], [109.1333, 112.8, 1], [109.8667, 114.0667, 1], [111.5667, 115.8333, 1], [112.3667, 116.6667, 1]];
+  const toD = (t) => { let i = SEG.length - 1; while (i > 0 && SEG[i][0] > t) i--; return SEG[i][1] + (t - SEG[i][0]) * SEG[i][2]; };
   const CAPS = window.CAPTIONS || [];
-  const JUMPS = [3.933, 6.067, 8.233, 11.7, 16.9, 18.1, 18.933, 22.2, 24.633, 26.933, 32.1, 35.367, 38.233, 39.433, 43.1, 44.567, 47.867, 49.1, 50.4, 50.833, 53.8, 55.633, 59.533, 61.467, 62.367, 66.533, 68.6, 69.033, 70.7, 73.633, 76.467, 78.967, 81.233, 81.767, 83.433, 86.8, 88.733, 94.567, 97.2, 98.433, 100.333, 105.533, 110.3, 112.8, 113.7, 115.8, 116.667];
+  const JUMPS = [3.967, 6.1, 8.533, 11.933, 16.633, 17.833, 18.567, 21.6, 22.533, 23.9, 26.2, 27.3, 31.267, 34.5, 37.367, 38.567, 42.233, 43.667, 46.967, 48.2, 49.433, 52.233, 53.933, 57.833, 59.233, 59.733, 60.6, 61.367, 64.3, 66.367, 66.767, 68.4, 71.067, 73.9, 76.367, 78.433, 78.9, 80.567, 83.867, 85.8, 91.633, 94.233, 95.467, 96.733, 96.933, 102.167, 106.9, 109.133, 109.867, 111.567, 112.367];
   // hero words: vertical centre of the word's line box (px from the top of the frame) — head top sits near y≈245
   const HERO = { cy: 108, scale: 0.9 };
   if (typeof location !== "undefined") { const q = new URLSearchParams(location.search); if (q.get("cy")) HERO.cy = +q.get("cy"); if (q.get("hs")) HERO.scale = +q.get("hs"); }
@@ -26,15 +29,15 @@ window.EDIT = (() => {
   ];
   BEHIND.forEach((B) => { B.size = Math.round(B.size * HERO.scale); B.top = HERO.cy - B.size * 0.625; });
   const KICKS = BEHIND.map((B) => B.a);
-  function punch(t) {
-    let i = 0; while (i < JUMPS.length && t >= JUMPS[i]) i++;
+  function punch(t, tt) {
+    let i = 0; while (i < JUMPS.length && tt >= JUMPS[i]) i++;
     const kicks = KICKS.reduce((a, at) => a + 0.025 * Math.max(0, kick(t - at + 0.03, { freq: 1.2, decay: 4 })), 0);
     return (i % 2 ? 1.06 : 1.0) + 0.008 * Math.sin(t * 0.5) + kicks;
   }
   const pop = (t, a) => { const s = spring(t - a, { freq: 1.8, damping: 0.72 }); return { s: lerp(0.86, 1, s), o: clamp((t - a) * 6) }; };
 
-  function footage(t) {
-    const F = FULL(punch(t)), mo = (a, b, A, B) => lerpBox(A, B, easeInOutCubic(prog(t, a, b)));
+  function footage(t, tt) {
+    const F = FULL(punch(t, tt)), mo = (a, b, A, B) => lerpBox(A, B, easeInOutCubic(prog(t, a, b)));
     const base = { clip: 0, dim: 0, o: 1, s: 1, full: false };
     if (t < 11.7) return { ...base, box: F, full: true };
     if (t < 50.0) { const p = pop(t, 11.7); return { ...base, box: CARD, s: p.s }; }
@@ -48,7 +51,7 @@ window.EDIT = (() => {
     if (t < 94.57) return { ...base, box: F, full: true };
     if (t < 113.3) { const p = pop(t, 94.57); return { ...base, box: CARD, s: p.s }; }
     if (t < 113.7) return { ...base, box: mo(113.3, 113.7, CARD, F) };
-    if (t < CLIP) return { ...base, box: F, full: true };
+    if (tt < CLIP) return { ...base, box: F, full: true };
     return { ...base, box: F, o: 0 };
   }
   const ZB = [{ at: 11.7, f1: { x: 540, y: 520 }, f2: { x: 222, y: 458 } }, { at: 94.57, f1: { x: 540, y: 520 }, f2: { x: 222, y: 458 } }];
@@ -88,7 +91,7 @@ window.EDIT = (() => {
   const S = (id, st) => (els[id] = st);
   function ui(t, tt) {
     for (const k in els) delete els[k];
-    S("chips", rise(t, 0.2, 2.5, { dy: -40 }));
+    S("chips", rise(t, 0.2, 1.8, { dy: -40 }));
     S("tracker", { on: trackerOn(t), y: 0, o: clamp((t - trackerIn(t)) * 4), blur: 0, s: 1 });
     // S1 — توسيع فكرة (paper)
     const o1 = 21.75;
@@ -125,7 +128,7 @@ window.EDIT = (() => {
     [["c11", 97.03], ["c12", 97.69], ["c13", 98.37], ["c21", 101.43], ["c22", 102.65], ["c23", 104.27], ["c24", 107.27], ["c25", 108.15], ["c26", 109.03], ["c31", 112.04], ["c32", 112.58]]
       .forEach(([id, a]) => S(id, popIn(t, a - L, o6)));
     // CTA
-    S("icSave", popIn(t, 115.6 - L, END_IN)); S("icSend", popIn(t, 116.5 - L, END_IN));
+    S("icSave", popIn(t, 115.6 - L, END_D + 1)); S("icSend", popIn(t, 116.5 - L, END_D + 1));
     // end card
     const eIn = END_IN;
     S("endSheet", { on: tt >= eIn, y: 1920 * (1 - easeOutCubic(prog(tt, eIn, eIn + 0.38))) });
@@ -144,7 +147,7 @@ window.EDIT = (() => {
 
   // ---------- captions ----------
   const ZONE_TOP = { full: 1190, band: 1470 };
-  const zoneAt = (t) => (t < 11.7 || (t >= 50.4 && t < 62.0) || (t >= 83.45 && t < 94.57) || (t >= 113.7 && t < END_IN + 0.1) ? "full" : null);
+  const zoneAt = (t) => (t < 11.7 || (t >= 50.4 && t < 62.0) || (t >= 83.45 && t < 94.57) || (t >= 113.7) ? "full" : null);
   function wordState(t, start) {
     const d = t - (start - L), s = spring(d, { freq: 2.0, damping: 0.6 });
     return { y: lerp(60, 0, s), blur: lerp(10, 0, clamp(s * 1.4)), o: clamp(d * 8), mk: marker(t, start + 0.04, 0.24).p };
@@ -162,8 +165,8 @@ window.EDIT = (() => {
   }
 
   function sceneAt(f) {
-    const tt = f / FPS, t = tt < CLIP ? tt : CLIP - 0.001;
-    return { t: tt, foot: footage(tt < CLIP ? tt : 999), cam: camera(t), bg: bgs(t), ui: ui(t, tt), behind: behind(t), tip: tipAt(t),
+    const tt = f / FPS, t = toD(Math.min(tt, CLIP - 0.001));
+    return { t: tt, foot: footage(t, tt), cam: camera(t), bg: bgs(t), ui: ui(t, tt), behind: behind(t), tip: tipAt(t),
       zone: tt < END_IN + 0.1 ? zoneAt(t) : null, caps: CAPS.map((c, i) => capState(c, t, i)) };
   }
   return { FPS, DUR, CLIP, CAPS, BEHIND, ZONE_TOP, HERO, sceneAt };
